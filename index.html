@@ -13,6 +13,7 @@
             height: 100vh;
             margin: 0;
             background-color: #f3f3f3;
+            flex-direction: column;
         }
 
         .container {
@@ -41,6 +42,22 @@
         @keyframes fillAnimation {
             0% { height: 0; }
             100% { height: 100%; }
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background-color: rgba(0, 255, 0, 0.7);
+            border-radius: 50%;
+            animation: waveAnimation 1.5s infinite linear;
+        }
+
+        @keyframes waveAnimation {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-100%); }
+            100% { transform: translateX(0); }
         }
 
         .button-container {
@@ -101,12 +118,26 @@
             margin-top: 20px;
         }
 
+        .summary {
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Заголовок цели -->
+        <h2 id="goalTitle">Цель: Наполнить контейнер</h2>
+
+        <!-- Контейнер с жидкостью -->
         <div class="fluid-container">
             <div class="fluid"></div>
+            <div class="wave"></div>
+        </div>
+
+        <!-- Текущая и целевая сумма -->
+        <div class="summary">
+            <p>Нынешняя сумма: <span id="currentAmount">0</span> / Целевая сумма: <span id="goalAmount">100</span></p>
         </div>
 
         <div class="button-container">
@@ -152,9 +183,10 @@
         const amountInput = document.getElementById('amountInput');
 
         acceptAmountButton.addEventListener('click', () => {
-            const amount = amountInput.value;
+            const amount = parseFloat(amountInput.value);
             if (amount) {
                 localStorage.setItem('amount', amount);
+                updateProgress(amount);
                 alert('Сумма принята: ' + amount);
                 calculator.style.display = 'none';
             }
@@ -183,15 +215,31 @@
             const savedTotal = localStorage.getItem('total');
 
             if (savedAmount) {
-                console.log('Сохраненная сумма: ' + savedAmount);
+                updateProgress(savedAmount);
             }
             if (savedTitle) {
-                titleInput.value = savedTitle;
+                document.getElementById('goalTitle').textContent = 'Цель: ' + savedTitle;
             }
             if (savedTotal) {
-                totalInput.value = savedTotal;
+                document.getElementById('goalAmount').textContent = savedTotal;
             }
         };
+
+        // Обновление прогресса
+        function updateProgress(amount) {
+            const goalAmount = parseFloat(localStorage.getItem('total')) || 100;
+            const currentAmount = amount;
+            const goalPercentage = (currentAmount / goalAmount) * 100;
+
+            const fluid = document.querySelector('.fluid');
+            const wave = document.querySelector('.wave');
+
+            // Анимация волн в зависимости от процента
+            fluid.style.height = `${goalPercentage}%`;
+
+            // Обновление текста суммы
+            document.getElementById('currentAmount').textContent = currentAmount;
+        }
     </script>
 </body>
 </html>
