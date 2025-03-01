@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Жидкость в контейнере и калькулятор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f3f3;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .fluid-container {
+            width: 200px;
+            height: 400px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .fluid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0;
+            background-color: green;
+            animation: fillAnimation 5s infinite alternate;
+        }
+
+        @keyframes fillAnimation {
+            0% { height: 0; }
+            100% { height: 100%; }
+        }
+
+        .button-container {
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+
+        .calculator, .settings {
+            display: none;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            margin: 20px auto;
+        }
+
+        .calculator input, .settings input {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .calculator button, .settings button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .settings {
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="fluid-container">
+            <div class="fluid"></div>
+        </div>
+
+        <div class="button-container">
+            <button class="btn btn-primary" id="showCalculator">+ Калькулятор</button>
+            <button class="btn btn-secondary" id="showSettings">Настройки</button>
+        </div>
+
+        <!-- Калькулятор -->
+        <div class="calculator" id="calculator">
+            <h3>Введите сумму</h3>
+            <input type="number" id="amountInput" placeholder="Сумма" />
+            <button id="acceptAmount">Принять</button>
+        </div>
+
+        <!-- Настройки -->
+        <div class="settings" id="settings">
+            <h3>Настройки</h3>
+            <input type="text" id="titleInput" placeholder="Заголовок цели" />
+            <input type="number" id="totalInput" placeholder="Итоговая сумма" />
+            <button id="saveSettings">Сохранить</button>
+        </div>
+    </div>
+
+    <script>
+        // Открытие калькулятора
+        const showCalculatorButton = document.getElementById('showCalculator');
+        const calculator = document.getElementById('calculator');
+        
+        showCalculatorButton.addEventListener('click', () => {
+            calculator.style.display = 'block';
+        });
+
+        // Открытие настроек
+        const showSettingsButton = document.getElementById('showSettings');
+        const settings = document.getElementById('settings');
+        
+        showSettingsButton.addEventListener('click', () => {
+            settings.style.display = 'block';
+        });
+
+        // Принять сумму
+        const acceptAmountButton = document.getElementById('acceptAmount');
+        const amountInput = document.getElementById('amountInput');
+
+        acceptAmountButton.addEventListener('click', () => {
+            const amount = amountInput.value;
+            if (amount) {
+                localStorage.setItem('amount', amount);
+                alert('Сумма принята: ' + amount);
+                calculator.style.display = 'none';
+            }
+        });
+
+        // Сохранить настройки
+        const saveSettingsButton = document.getElementById('saveSettings');
+        const titleInput = document.getElementById('titleInput');
+        const totalInput = document.getElementById('totalInput');
+
+        saveSettingsButton.addEventListener('click', () => {
+            const title = titleInput.value;
+            const total = totalInput.value;
+            if (title && total) {
+                localStorage.setItem('title', title);
+                localStorage.setItem('total', total);
+                alert('Настройки сохранены');
+                settings.style.display = 'none';
+            }
+        });
+
+        // Загрузка сохраненных данных
+        window.onload = function () {
+            const savedAmount = localStorage.getItem('amount');
+            const savedTitle = localStorage.getItem('title');
+            const savedTotal = localStorage.getItem('total');
+
+            if (savedAmount) {
+                console.log('Сохраненная сумма: ' + savedAmount);
+            }
+            if (savedTitle) {
+                titleInput.value = savedTitle;
+            }
+            if (savedTotal) {
+                totalInput.value = savedTotal;
+            }
+        };
+    </script>
+</body>
+</html>
