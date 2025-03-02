@@ -141,6 +141,13 @@
         let isRegistered = false;
         let resendTimer = null;
 
+        function moveNext(index) {
+            let inputs = document.querySelectorAll('.otp-input');
+            if (inputs[index].value && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        }
+
         function showContent(section) {
             if (activePage === section) return;
             activePage = section;
@@ -199,6 +206,35 @@
                 document.getElementById('register-step').style.display = 'block';
             }
         }
+
+        function startResendTimer() {
+            let timerElement = document.getElementById('timer');
+            let resendElement = document.getElementById('resend');
+            let timeLeft = 59;
+        
+            resendElement.classList.remove('active');
+            resendElement.onclick = null;
+        
+            resendTimer = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(resendTimer);
+                    resendElement.textContent = 'Отправить повторно';
+                    resendElement.classList.add('active');
+                    resendElement.onclick = resendCode;
+                } else {
+                    timerElement.textContent = timeLeft;
+                    timeLeft--;
+                }
+            }, 1000);
+        }
+        
+        function resendCode() {
+            generatedCode = Math.floor(100000 + Math.random() * 900000);
+            console.log('Новый код:', generatedCode);
+            
+            startResendTimer();
+        }
+
 
         function login() {
             alert('Успешный вход!');
