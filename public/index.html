@@ -57,32 +57,6 @@
             padding: 20px;
             font-size: 18px;
         }
-
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 300px;
-            margin: auto;
-        }
-
-        .auth-form input, .auth-form button {
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: none;
-        }
-
-        .auth-form button {
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-
-        .password-criteria {
-            font-size: 12px;
-            color: red;
-        }
     </style>    
 </head>
 <body>
@@ -94,24 +68,6 @@
             <div id="profile-content" style="display: none;">
                 <h1>Профиль</h1>
                 <div id="profile-data"></div>
-                <div id="auth">
-                    <h2>Введите почту</h2>
-                    <div class="auth-form">
-                        <input type="email" id="email" placeholder="Почта">
-                        <button onclick="sendVerificationCode()">Отправить код</button>
-                    </div>
-                </div>
-                <div id="verify" style="display: none;">
-                    <h2>Введите код из почты</h2>
-                    <input type="text" id="verificationCode" placeholder="Код">
-                    <button onclick="verifyCode()">Подтвердить</button>
-                </div>
-                <div id="password-section" style="display: none;">
-                    <h2>Введите пароль</h2>
-                    <input type="password" id="password" placeholder="Пароль">
-                    <div id="criteria" class="password-criteria"></div>
-                    <button onclick="finalizeAuth()">Продолжить</button>
-                </div>
             </div>
         </div>
     </div>
@@ -123,10 +79,6 @@
     </div>
 
     <script>
-        let tempCode = null;
-        let codeExpires = null;
-        let isNewUser = false;
-        let passwordCriteriaEnabled = false; 
 
         function showContent(section) {
             document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
@@ -140,38 +92,6 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('profile-content').style.display = 'block';
             }, 2000);
-        }
-
-        function sendVerificationCode() {
-            tempCode = Math.floor(100000 + Math.random() * 900000);
-            codeExpires = Date.now() + 10 * 60 * 1000;
-            console.log('Код подтверждения:', tempCode);
-            document.getElementById('auth').style.display = 'none';
-            document.getElementById('verify').style.display = 'block';
-        }
-
-        function verifyCode() {
-            if (Date.now() > codeExpires) {
-                alert('Код истёк!');
-                return;
-            }
-            if (document.getElementById('verificationCode').value == tempCode) {
-                isNewUser = Math.random() > 0.5;
-                document.getElementById('verify').style.display = 'none';
-                document.getElementById('password-section').style.display = 'block';
-            } else {
-                alert('Неверный код!');
-            }
-        }
-
-        function finalizeAuth() {
-            let password = document.getElementById('password').value;
-            if (password) {
-                localStorage.setItem('userToken', 'dummy-token');
-                alert(isNewUser ? 'Аккаунт создан!' : 'Вы вошли!');
-                document.getElementById('profile-content').style.display = 'block';
-                document.getElementById('password-section').style.display = 'none';
-            }
         }
     </script>
 </body>
