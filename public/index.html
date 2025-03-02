@@ -67,7 +67,14 @@
             <div id="loading">Загрузка...</div>
             <div id="profile-content" style="display: none;">
                 <h1>Профиль</h1>
-                <p>Информация о пользователе.</p>
+                <div id="profile-data"></div>
+                <div id="auth" style="display: none;">
+                    <h2>Вход / Регистрация</h2>
+                    <input type="email" id="email" placeholder="Почта"><br>
+                    <input type="password" id="password" placeholder="Пароль"><br>
+                    <button onclick="login()">Войти</button>
+                    <button onclick="register()">Зарегистрироваться</button>
+                </div>
             </div>
         </div>
     </div>
@@ -100,11 +107,6 @@
         function showProfile() {
             if (currentSection === 'profile') return;
             
-            const isLoggedIn = localStorage.getItem('userToken');
-            if (!isLoggedIn) {
-                return showAuthModal();
-            }
-            
             showContent('profile');
             document.getElementById('loading').style.display = 'block';
             document.getElementById('profile-content').style.display = 'none';
@@ -112,11 +114,34 @@
             setTimeout(() => {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('profile-content').style.display = 'block';
+                
+                const isLoggedIn = localStorage.getItem('userToken');
+                if (isLoggedIn) {
+                    document.getElementById('profile-data').innerHTML = '<p>Добро пожаловать, пользователь!</p>';
+                    document.getElementById('auth').style.display = 'none';
+                } else {
+                    document.getElementById('profile-data').innerHTML = '';
+                    document.getElementById('auth').style.display = 'block';
+                }
             }, 2000);
         }
 
-        function showAuthModal() {
-            alert('Для доступа к профилю необходимо войти или зарегистрироваться.');
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if (email && password) {
+                localStorage.setItem('userToken', 'dummy-token');
+                showProfile();
+            }
+        }
+
+        function register() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if (email && password) {
+                localStorage.setItem('userToken', 'dummy-token');
+                showProfile();
+            }
         }
     </script>
 </body>
