@@ -183,6 +183,7 @@
             const user = usersDB.users.find(u => u.email === email);
 
             if (user) {
+                // Если пользователь найден, то генерируем код
                 verificationCode = generateVerificationCode();
                 codeExpiration = new Date(new Date().getTime() + 10 * 60000); // код действителен 10 минут
                 console.log("Сгенерированный код: ", verificationCode); // Для тестов
@@ -190,7 +191,10 @@
                 document.getElementById('code-step').style.display = 'block';
                 document.getElementById('user-email').textContent = email;
             } else {
-                alert('Пользователь не найден');
+                // Если пользователя нет, переходим к регистрации
+                alert('Пользователь не найден. Переходим к регистрации!');
+                document.getElementById('email-step').style.display = 'none';
+                document.getElementById('register-step').style.display = 'block';
             }
         }
 
