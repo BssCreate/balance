@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROчаны</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
         body {
             margin: 0;
@@ -140,15 +141,10 @@
     </div>
 
     <script>
-        let usersDB = {
-            "users": [
-                {
-                    "email": "example@example.com",
-                    "password": "hashedpassword123",
-                    "nickname": "User123"
-                }
-            ]
-        };
+        const SUPABASE_URL = "https://gspbugpedugmabacagrc.supabase.co"; // Замени на свой URL
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzcGJ1Z3BlZHVnbWFiYWNhZ3JjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5MjM1NjIsImV4cCI6MjA1NjQ5OTU2Mn0.mdcmjQCQVDC2LX8DfzJyLjrwXn9kz0SYtDulcS78aCE"; // Замени на свой ключ
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentUser = null;
         let verificationCode = "";
@@ -160,61 +156,72 @@
         }
 
         function showProfile() {
-            showContent('profile');
-
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('profile-content').style.display = 'none';
-            document.getElementById('auth-form').style.display = 'none';
-
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("profile-content").style.display = "none";
+            document.getElementById("auth-form").style.display = "none";
+        
             setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
+                document.getElementById("loading").style.display = "none";
+        
                 if (currentUser) {
-                    document.getElementById('nickname').textContent = currentUser.nickname;
-                    document.getElementById('email').textContent = currentUser.email;
-                    document.getElementById('profile-content').style.display = 'block';
+                    document.getElementById("nickname").textContent = currentUser.nickname;
+                    document.getElementById("email").textContent = currentUser.email;
+                    document.getElementById("profile-content").style.display = "block";
                 } else {
-                    document.getElementById('auth-form').style.display = 'block';
+                    document.getElementById("auth-form").style.display = "block";
                 }
             }, 2000);
         }
 
-        function sendCode() {
-            const email = document.getElementById('email').value;
-            const user = usersDB.users.find(u => u.email === email);
 
-            if (user) {
-                // Если пользователь найден, то генерируем код
-                verificationCode = generateVerificationCode();
-                codeExpiration = new Date(new Date().getTime() + 10 * 60000); // код действителен 10 минут
-                console.log("Сгенерированный код: ", verificationCode); // Для тестов
-                document.getElementById('email-step').style.display = 'none';
-                document.getElementById('code-step').style.display = 'block';
-                document.getElementById('user-email').textContent = email;
+        async function sendCode() {
+            const email = document.getElementById("email").value;
+        
+            // Проверяем, есть ли email в базе
+            const { data: user, error } = await supabase
+                .from("users")
+                .select("*")
+                .eq("email", email)
+                .single();
+        
+            if (error || !user) {
+                document.getElementById("email-step").style.display = "none";
+                document.getElementById("register-step").style.display = "block";
             } else {
-                // Если пользователя нет, переходим к регистрации
-                alert('Пользователь не найден. Переходим к регистрации!');
-                document.getElementById('email-step').style.display = 'none';
-                document.getElementById('register-step').style.display = 'block';
+                verificationCode = generateVerificationCode();
+                codeExpiration = new Date(new Date().getTime() + 10 * 60000); // 10 минут
+        
+                console.log("Код:", verificationCode); // Для теста
+        
+                document.getElementById("email-step").style.display = "none";
+                document.getElementById("code-step").style.display = "block";
+                document.getElementById("user-email").textContent = email;
             }
         }
+
 
         function generateVerificationCode() {
             return Math.floor(100000 + Math.random() * 900000).toString(); // Генерация случайного 6-значного кода
         }
 
         function verifyCode() {
-            const codeEntered = Array.from(document.querySelectorAll('.otp-input')).map(input => input.value).join('');
+            const codeEntered = Array.from(document.querySelectorAll('.otp-input'))
+                .map(input => input.value).join('');
+        
             if (codeEntered === verificationCode && new Date() < codeExpiration) {
-                document.getElementById('code-step').style.display = 'none';
+                document.getElementById("code-step").style.display = "none";
+        
                 if (currentUser) {
-                    document.getElementById('password-step').style.display = 'block';
+                    document.getElementById("password-step").style.display = "block";
                 } else {
-                    document.getElementById('register-step').style.display = 'block';
+                    document.getElementById("register-step").style.display = "block";
                 }
             } else {
-                alert('Неверный код или срок действия кода истёк!');
+                alert("Неверный код!");
+                document.querySelectorAll(".otp-input").forEach(input => input.value = "");
             }
         }
+
 
         function moveNext(index) {
             let inputs = document.querySelectorAll('.otp-input');
@@ -226,32 +233,51 @@
             }
         }
 
-        function login() {
-            alert('Успешный вход!');
-            currentUser = usersDB.users.find(u => u.email === document.getElementById('user-email').textContent);
-            showProfile();
+        async function login() {
+            const email = document.getElementById("user-email").textContent;
+            const password = document.getElementById("password").value;
+        
+            const { data: user, error } = await supabase
+                .from("users")
+                .select("*")
+                .eq("email", email)
+                .eq("password", password)
+                .single();
+        
+            if (user) {
+                alert("Успешный вход!");
+                currentUser = user;
+                showProfile();
+            } else {
+                alert("Неверный пароль!");
+            }
         }
 
-        function register() {
-            let password = document.getElementById('reg-password').value;
-            let confirmPassword = document.getElementById('confirm-password').value;
 
+        async function register() {
+            const email = document.getElementById("user-email").textContent;
+            const nickname = document.getElementById("nickname").value;
+            const password = document.getElementById("reg-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+        
             if (password !== confirmPassword) {
-                alert('Пароли не совпадают!');
+                alert("Пароли не совпадают!");
                 return;
             }
-
-            const newUser = {
-                email: document.getElementById('user-email').textContent,
-                password: password,
-                nickname: document.getElementById('nickname').value
-            };
-
-            usersDB.users.push(newUser);
-            alert('Регистрация успешна!');
-            currentUser = newUser;
-            showProfile();
+        
+            const { error } = await supabase
+                .from("users")
+                .insert([{ email, password, nickname }]);
+        
+            if (error) {
+                alert("Ошибка регистрации!");
+            } else {
+                alert("Регистрация успешна!");
+                currentUser = { email, nickname };
+                showProfile();
+            }
         }
+
     </script>
 </body>
 </html>
