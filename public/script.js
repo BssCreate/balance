@@ -1,4 +1,10 @@
-const SUPABASE_URL = "https://gspbugpedugmabacagrc.supabase.co"; // Замени на свой URL
+            if (!window.supabase) {
+                console.error("Supabase SDK не загружен!");
+            } else {
+                console.log("Supabase загружен!");
+            }
+
+            const SUPABASE_URL = "https://gspbugpedugmabacagrc.supabase.co"; // Замени на свой URL
             const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzcGJ1Z3BlZHVnbWFiYWNhZ3JjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5MjM1NjIsImV4cCI6MjA1NjQ5OTU2Mn0.mdcmjQCQVDC2LX8DfzJyLjrwXn9kz0SYtDulcS78aCE"; // Замени на свой ключ
             const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
