@@ -10,6 +10,7 @@
             font-family: Arial, sans-serif;
             background-color: #0e1824;
             color: white;
+            padding-bottom: 60px;
         }
 
         .container {
@@ -41,17 +42,82 @@
             border-bottom: 2px solid #007bff;
         }
 
-        .discount {
-            color: #4caf50;
-            font-weight: bold;
+        .content {
+            display: none;
+            padding: 20px;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
         }
     </style>    
 </head>
 <body>
+    <div class="container">
+        <div id="products" class="content">Раздел Услуги</div>
+        <div id="news" class="content active">Раздел Новости</div>
+        <div id="profile" class="content">
+            <div id="loading">Загрузка...</div>
+            <div id="profile-content" style="display: none;">
+                <h1>Профиль</h1>
+                <p>Информация о пользователе.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="bottom-nav">
         <button onclick="showContent('products')" id="btn-products">Услуги</button>
         <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
-        <button onclick="showContent('profile')" id="btn-profile">Профиль</button>
+        <button onclick="showProfile()" id="btn-profile">Профиль</button>
     </div>
+
+    <script>
+        let currentSection = 'news';
+
+        function showContent(section) {
+            if (currentSection === section) return;
+            
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(section).classList.add('active');
+            
+            document.querySelectorAll('.bottom-nav button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(`btn-${section}`).classList.add('active');
+            
+            currentSection = section;
+        }
+
+        function showProfile() {
+            if (currentSection === 'profile') return;
+            
+            const isLoggedIn = localStorage.getItem('userToken');
+            if (!isLoggedIn) {
+                return showAuthModal();
+            }
+            
+            showContent('profile');
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('profile-content').style.display = 'none';
+            
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
+            }, 2000);
+        }
+
+        function showAuthModal() {
+            alert('Для доступа к профилю необходимо войти или зарегистрироваться.');
+        }
+    </script>
 </body>
 </html>
