@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROчаны</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
         body {
             margin: 0;
@@ -138,7 +139,6 @@
         <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
         <button onclick="showProfile()" id="btn-profile">Профиль</button>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
         const SUPABASE_URL = "https://gspbugpedugmabacagrc.supabase.co"; // Замени на свой URL
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzcGJ1Z3BlZHVnbWFiYWNhZ3JjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5MjM1NjIsImV4cCI6MjA1NjQ5OTU2Mn0.mdcmjQCQVDC2LX8DfzJyLjrwXn9kz0SYtDulcS78aCE"; // Замени на свой ключ
