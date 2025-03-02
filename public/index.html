@@ -57,6 +57,27 @@
             padding: 20px;
             font-size: 18px;
         }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 300px;
+            margin: auto;
+        }
+
+        .auth-form input, .auth-form button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .auth-form button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
     </style>    
 </head>
 <body>
@@ -70,14 +91,17 @@
                 <div id="profile-data"></div>
                 <div id="auth" style="display: none;">
                     <h2>Вход / Регистрация</h2>
-                    <input type="email" id="email" placeholder="Почта"><br>
-                    <input type="password" id="password" placeholder="Пароль"><br>
-                    <button onclick="sendVerificationCode('login')">Войти</button>
-                    <button onclick="sendVerificationCode('register')">Зарегистрироваться</button>
+                    <div class="auth-form">
+                        <input type="email" id="email" placeholder="Почта">
+                        <input type="password" id="password" placeholder="Пароль">
+                        <input type="text" id="nickname" placeholder="Ник" style="display: none;">
+                        <button onclick="sendVerificationCode('login')">Войти</button>
+                        <button onclick="sendVerificationCode('register')">Зарегистрироваться</button>
+                    </div>
                 </div>
                 <div id="verify" style="display: none;">
                     <h2>Введите код из почты</h2>
-                    <input type="text" id="verificationCode" placeholder="Код"><br>
+                    <input type="text" id="verificationCode" placeholder="Код">
                     <button onclick="verifyCode()">Подтвердить</button>
                 </div>
             </div>
@@ -137,13 +161,15 @@
         function sendVerificationCode(type) {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const nickname = document.getElementById('nickname');
+            
             if (!email || !password) return alert('Заполните все поля!');
+            if (type === 'register') nickname.style.display = 'block';
             
             authType = type;
             tempCode = Math.floor(100000 + Math.random() * 900000);
-            codeExpires = Date.now() + 10 * 60 * 1000; // 10 минут
-            
-            console.log('Код подтверждения:', tempCode); // Симуляция отправки
+            codeExpires = Date.now() + 10 * 60 * 1000; 
+            console.log('Код подтверждения:', tempCode);
             
             document.getElementById('auth').style.display = 'none';
             document.getElementById('verify').style.display = 'block';
