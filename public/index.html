@@ -126,7 +126,7 @@
         let tempCode = null;
         let codeExpires = null;
         let isNewUser = false;
-        let passwordCriteriaEnabled = true; 
+        let passwordCriteriaEnabled = false; 
 
         function showContent(section) {
             document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
@@ -164,28 +164,13 @@
             }
         }
 
-        function checkPasswordCriteria(password) {
-            let criteria = [];
-            if (passwordCriteriaEnabled) {
-                if (password.length < 8) criteria.push('Минимум 8 символов');
-                if (!/[A-Z]/.test(password)) criteria.push('Хотя бы 1 заглавная буква');
-                if (!/[^A-Za-z0-9]/.test(password)) criteria.push('Хотя бы 1 спец. символ');
-                if (!/^[A-Za-z0-9!@#$%^&*]+$/.test(password)) criteria.push('Только английские буквы');
-            }
-            document.getElementById('criteria').innerHTML = criteria.join('<br>');
-            return criteria.length === 0;
-        }
-
-        document.getElementById('password').addEventListener('input', (e) => checkPasswordCriteria(e.target.value));
-
         function finalizeAuth() {
             let password = document.getElementById('password').value;
-            if (checkPasswordCriteria(password)) {
+            if (password) {
                 localStorage.setItem('userToken', 'dummy-token');
                 alert(isNewUser ? 'Аккаунт создан!' : 'Вы вошли!');
-                showProfile();
-            } else {
-                alert('Пароль не соответствует требованиям!');
+                document.getElementById('profile-content').style.display = 'block';
+                document.getElementById('password-section').style.display = 'none';
             }
         }
     </script>
