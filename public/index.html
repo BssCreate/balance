@@ -49,7 +49,19 @@
             display: none;
             text-align: center;
             padding: 20px;
-            font-size: 18px;
+        }
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .input-group {
             margin: 10px 0;
@@ -65,14 +77,6 @@
             font-size: 20px;
             margin: 0 5px;
         }
-        .resend {
-            color: gray;
-            cursor: default;
-        }
-        .resend.active {
-            color: #007bff;
-            cursor: pointer;
-        }
     </style>    
 </head>
 <body>
@@ -80,7 +84,7 @@
         <div id="products" class="content">Раздел Услуги</div>
         <div id="news" class="content active">Раздел Новости</div>
         <div id="profile" class="content">
-            <div id="loading">Загрузка...</div>
+            <div id="loading"><div class="loader"></div></div>
             <div id="profile-content" style="display: none;">
                 <h1>Профиль</h1>
                 <div id="profile-data"></div>
@@ -104,7 +108,6 @@
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(5)">
                     </div>
                     <button onclick="verifyCode()">Введите код</button>
-                    <p id="resend" class="resend" onclick="resendCode()">Отправить повторно через <span id="timer">59</span> с.</p>
                 </div>
                 <div id="password-step" style="display: none;">
                     <div class="input-group">
@@ -135,32 +138,14 @@
     </div>
 
     <script>
-        let activePage = 'news';
-        let generatedCode = null;
-        let userEmail = '';
         let isRegistered = false;
-        let resendTimer = null;
-
-        function moveNext(index) {
-            let inputs = document.querySelectorAll('.otp-input');
-            if (inputs[index].value && index < inputs.length - 1) {
-                inputs[index + 1].focus();
-            }
-        }
 
         function showContent(section) {
-            if (activePage === section) return;
-            activePage = section;
-
             document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
             document.getElementById(section).classList.add('active');
-
-            document.querySelectorAll('.bottom-nav button').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${section}`).classList.add('active');
         }
 
         function showProfile() {
-            if (activePage === 'profile') return;
             showContent('profile');
 
             document.getElementById('loading').style.display = 'block';
@@ -168,84 +153,54 @@
             document.getElementById('auth-form').style.display = 'none';
 
             setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
                 if (isRegistered) {
                     document.getElementById('profile-content').style.display = 'block';
                 } else {
                     document.getElementById('auth-form').style.display = 'block';
                 }
-                document.getElementById('loading').style.display = 'none';
             }, 2000);
         }
 
         function sendCode() {
-            userEmail = document.getElementById('email').value;
-            if (!userEmail) return alert('Введите почту');
-
-            generatedCode = Math.floor(100000 + Math.random() * 900000);
-            console.log('Отправленный код:', generatedCode);
-
             document.getElementById('email-step').style.display = 'none';
             document.getElementById('code-step').style.display = 'block';
-            document.getElementById('user-email').textContent = userEmail;
-
-            startResendTimer();
         }
 
         function verifyCode() {
-            let enteredCode = Array.from(document.querySelectorAll('.otp-input')).map(input => input.value).join('');
-            if (enteredCode !== generatedCode.toString()) {
-                document.querySelectorAll('.otp-input').forEach(input => input.value = '');
-                return alert('Неверный код');
-            }
-
+            document.getElementById('code-step').style.display = 'none';
             if (isRegistered) {
-                document.getElementById('code-step').style.display = 'none';
                 document.getElementById('password-step').style.display = 'block';
             } else {
-                document.getElementById('code-step').style.display = 'none';
                 document.getElementById('register-step').style.display = 'block';
             }
         }
 
-        function startResendTimer() {
-            let timerElement = document.getElementById('timer');
-            let resendElement = document.getElementById('resend');
-            let timeLeft = 59;
-        
-            resendElement.classList.remove('active');
-            resendElement.onclick = null;
-        
-            resendTimer = setInterval(() => {
-                if (timeLeft <= 0) {
-                    clearInterval(resendTimer);
-                    resendElement.textContent = 'Отправить повторно';
-                    resendElement.classList.add('active');
-                    resendElement.onclick = resendCode;
-                } else {
-                    timerElement.textContent = timeLeft;
-                    timeLeft--;
-                }
-            }, 1000);
-        }
-        
-        function resendCode() {
-            generatedCode = Math.floor(100000 + Math.random() * 900000);
-            console.log('Новый код:', generatedCode);
-            
-            startResendTimer();
-        }
-
-
         function login() {
             alert('Успешный вход!');
-            document.getElementById('profile-content').style.display = 'block';
-            document.getElementById('auth-form').style.display = 'none';
+            isRegistered = true;
+            showProfile();
         }
 
         function register() {
+            let password = document.getElementById('reg-password').value;
+            let confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Пароли не совпадают!');
+                return;
+            }
+
             alert('Регистрация успешна!');
             isRegistered = true;
             showProfile();
+        }
+
+        function moveNext(index) {
+            let inputs = document.querySelectorAll('.otp-input');
+            if (inputs[index].value && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
         }
     </script>
 </body>
