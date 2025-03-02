@@ -78,6 +78,11 @@
             color: white;
             cursor: pointer;
         }
+
+        .password-criteria {
+            font-size: 12px;
+            color: red;
+        }
     </style>    
 </head>
 <body>
@@ -89,20 +94,23 @@
             <div id="profile-content" style="display: none;">
                 <h1>Профиль</h1>
                 <div id="profile-data"></div>
-                <div id="auth" style="display: none;">
-                    <h2>Вход / Регистрация</h2>
+                <div id="auth">
+                    <h2>Введите почту</h2>
                     <div class="auth-form">
                         <input type="email" id="email" placeholder="Почта">
-                        <input type="password" id="password" placeholder="Пароль">
-                        <input type="text" id="nickname" placeholder="Ник" style="display: none;">
-                        <button onclick="sendVerificationCode('login')">Войти</button>
-                        <button onclick="sendVerificationCode('register')">Зарегистрироваться</button>
+                        <button onclick="sendVerificationCode()">Отправить код</button>
                     </div>
                 </div>
                 <div id="verify" style="display: none;">
                     <h2>Введите код из почты</h2>
                     <input type="text" id="verificationCode" placeholder="Код">
                     <button onclick="verifyCode()">Подтвердить</button>
+                </div>
+                <div id="password-section" style="display: none;">
+                    <h2>Введите пароль</h2>
+                    <input type="password" id="password" placeholder="Пароль">
+                    <div id="criteria" class="password-criteria"></div>
+                    <button onclick="finalizeAuth()">Продолжить</button>
                 </div>
             </div>
         </div>
@@ -115,82 +123,69 @@
     </div>
 
     <script>
-        let currentSection = 'news';
         let tempCode = null;
         let codeExpires = null;
-        let authType = null;
+        let isNewUser = false;
+        let passwordCriteriaEnabled = true; 
 
         function showContent(section) {
-            if (currentSection === section) return;
-            
-            document.querySelectorAll('.content').forEach(content => {
-                content.classList.remove('active');
-            });
+            document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
             document.getElementById(section).classList.add('active');
-            
-            document.querySelectorAll('.bottom-nav button').forEach(button => {
-                button.classList.remove('active');
-            });
-            document.getElementById(`btn-${section}`).classList.add('active');
-            
-            currentSection = section;
         }
 
         function showProfile() {
-            if (currentSection === 'profile') return;
-            
             showContent('profile');
             document.getElementById('loading').style.display = 'block';
-            document.getElementById('profile-content').style.display = 'none';
-            
             setTimeout(() => {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('profile-content').style.display = 'block';
-                
-                const isLoggedIn = localStorage.getItem('userToken');
-                if (isLoggedIn) {
-                    document.getElementById('profile-data').innerHTML = '<p>Добро пожаловать, пользователь!</p>';
-                    document.getElementById('auth').style.display = 'none';
-                } else {
-                    document.getElementById('profile-data').innerHTML = '';
-                    document.getElementById('auth').style.display = 'block';
-                }
             }, 2000);
         }
 
-        function sendVerificationCode(type) {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const nickname = document.getElementById('nickname');
-            
-            if (!email || !password) return alert('Заполните все поля!');
-            if (type === 'register') nickname.style.display = 'block';
-            
-            authType = type;
+        function sendVerificationCode() {
             tempCode = Math.floor(100000 + Math.random() * 900000);
-            codeExpires = Date.now() + 10 * 60 * 1000; 
+            codeExpires = Date.now() + 10 * 60 * 1000;
             console.log('Код подтверждения:', tempCode);
-            
             document.getElementById('auth').style.display = 'none';
             document.getElementById('verify').style.display = 'block';
         }
 
         function verifyCode() {
-            const enteredCode = document.getElementById('verificationCode').value;
-            if (!enteredCode) return alert('Введите код!');
-            
             if (Date.now() > codeExpires) {
-                alert('Код истёк! Запросите новый.');
-                document.getElementById('verify').style.display = 'none';
-                document.getElementById('auth').style.display = 'block';
+                alert('Код истёк!');
                 return;
             }
-            
-            if (enteredCode == tempCode) {
-                localStorage.setItem('userToken', 'dummy-token');
-                showProfile();
+            if (document.getElementById('verificationCode').value == tempCode) {
+                isNewUser = Math.random() > 0.5;
+                document.getElementById('verify').style.display = 'none';
+                document.getElementById('password-section').style.display = 'block';
             } else {
                 alert('Неверный код!');
+            }
+        }
+
+        function checkPasswordCriteria(password) {
+            let criteria = [];
+            if (passwordCriteriaEnabled) {
+                if (password.length < 8) criteria.push('Минимум 8 символов');
+                if (!/[A-Z]/.test(password)) criteria.push('Хотя бы 1 заглавная буква');
+                if (!/[^A-Za-z0-9]/.test(password)) criteria.push('Хотя бы 1 спец. символ');
+                if (!/^[A-Za-z0-9!@#$%^&*]+$/.test(password)) criteria.push('Только английские буквы');
+            }
+            document.getElementById('criteria').innerHTML = criteria.join('<br>');
+            return criteria.length === 0;
+        }
+
+        document.getElementById('password').addEventListener('input', (e) => checkPasswordCriteria(e.target.value));
+
+        function finalizeAuth() {
+            let password = document.getElementById('password').value;
+            if (checkPasswordCriteria(password)) {
+                localStorage.setItem('userToken', 'dummy-token');
+                alert(isNewUser ? 'Аккаунт создан!' : 'Вы вошли!');
+                showProfile();
+            } else {
+                alert('Пароль не соответствует требованиям!');
             }
         }
     </script>
