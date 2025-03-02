@@ -72,8 +72,13 @@
                     <h2>Вход / Регистрация</h2>
                     <input type="email" id="email" placeholder="Почта"><br>
                     <input type="password" id="password" placeholder="Пароль"><br>
-                    <button onclick="login()">Войти</button>
-                    <button onclick="register()">Зарегистрироваться</button>
+                    <button onclick="sendVerificationCode('login')">Войти</button>
+                    <button onclick="sendVerificationCode('register')">Зарегистрироваться</button>
+                </div>
+                <div id="verify" style="display: none;">
+                    <h2>Введите код из почты</h2>
+                    <input type="text" id="verificationCode" placeholder="Код"><br>
+                    <button onclick="verifyCode()">Подтвердить</button>
                 </div>
             </div>
         </div>
@@ -87,6 +92,9 @@
 
     <script>
         let currentSection = 'news';
+        let tempCode = null;
+        let codeExpires = null;
+        let authType = null;
 
         function showContent(section) {
             if (currentSection === section) return;
@@ -126,21 +134,37 @@
             }, 2000);
         }
 
-        function login() {
+        function sendVerificationCode(type) {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            if (email && password) {
-                localStorage.setItem('userToken', 'dummy-token');
-                showProfile();
-            }
+            if (!email || !password) return alert('Заполните все поля!');
+            
+            authType = type;
+            tempCode = Math.floor(100000 + Math.random() * 900000);
+            codeExpires = Date.now() + 10 * 60 * 1000; // 10 минут
+            
+            console.log('Код подтверждения:', tempCode); // Симуляция отправки
+            
+            document.getElementById('auth').style.display = 'none';
+            document.getElementById('verify').style.display = 'block';
         }
 
-        function register() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            if (email && password) {
+        function verifyCode() {
+            const enteredCode = document.getElementById('verificationCode').value;
+            if (!enteredCode) return alert('Введите код!');
+            
+            if (Date.now() > codeExpires) {
+                alert('Код истёк! Запросите новый.');
+                document.getElementById('verify').style.display = 'none';
+                document.getElementById('auth').style.display = 'block';
+                return;
+            }
+            
+            if (enteredCode == tempCode) {
                 localStorage.setItem('userToken', 'dummy-token');
                 showProfile();
+            } else {
+                alert('Неверный код!');
             }
         }
     </script>
