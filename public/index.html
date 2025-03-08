@@ -98,7 +98,7 @@
                     <div class="input-group">
                         <input type="email" id="email" placeholder="Адрес электронной почты">
                     </div>
-                    <button id="sendCodeBtn">Получить код</button>
+                    <button onclick="sendCode()">Получить код</button>
                 </div>
                 <div id="code-step" style="display: none;">
                     <p>Мы отправили письмо на <span id="user-email"></span></p>
@@ -110,7 +110,6 @@
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(4)">
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(5)">
                     </div>
-                    <p id="timer">Отправить повторно через <span id="time">59</span> сек</p>
                 </div>
                 <div id="password-step" style="display: none;">
                     <div class="input-group">
@@ -139,90 +138,6 @@
         <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
         <button onclick="showProfile()" id="btn-profile">Профиль</button>
     </div>
-
-    <script>
-        let otpCode = "";
-        let timer;
-
-        // Функция для отображения содержимого
-        function showContent(contentId) {
-            const contents = document.querySelectorAll('.content');
-            const buttons = document.querySelectorAll('.bottom-nav button');
-
-            contents.forEach(content => {
-                content.classList.remove('active');
-            });
-
-            buttons.forEach(button => {
-                button.classList.remove('active');
-            });
-
-            document.getElementById(contentId).classList.add('active');
-            document.getElementById(`btn-${contentId}`).classList.add('active');
-        }
-
-        // Функция для отображения профиля
-        function showProfile() {
-            // Показываем загрузку
-            document.getElementById('loading').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('profile-content').style.display = 'block';
-                document.getElementById('auth-form').style.display = 'block';
-            }, 2000);
-        }
-
-        // Отправить код
-        document.getElementById('sendCodeBtn').onclick = function() {
-            const email = document.getElementById('email').value;
-            if (email) {
-                // Генерация случайного кода (для консоли)
-                otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-                console.log("Отправленный код: " + otpCode);
-                
-                document.getElementById('user-email').innerText = email;
-                document.getElementById('email-step').style.display = 'none';
-                document.getElementById('code-step').style.display = 'block';
-
-                startTimer();
-            }
-        };
-
-        // Таймер для повторной отправки кода
-        function startTimer() {
-            let timeLeft = 59;
-            document.getElementById('time').innerText = timeLeft;
-            timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('time').innerText = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    document.getElementById('timer').innerText = "Код больше не доступен. Попробуйте снова.";
-                }
-            }, 1000);
-        }
-
-        // Переход между полями ввода OTP
-        function moveNext(index) {
-            const inputs = document.querySelectorAll('.otp-input');
-            if (inputs[index].value.length === 1 && index < 5) {
-                inputs[index + 1].focus();
-            }
-        }
-
-        // Войти
-        function login() {
-            const password = document.getElementById('password').value;
-            console.log('Вход с паролем: ', password);
-        }
-
-        // Зарегистрироваться
-        function register() {
-            const nickname = document.getElementById('nickname').value;
-            const regPassword = document.getElementById('reg-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            console.log('Регистрация: ', nickname, regPassword, confirmPassword);
-        }
-    </script>
+    <script src="script.js" defer></script>
 </body>
 </html>
