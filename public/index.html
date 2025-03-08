@@ -138,6 +138,26 @@
         <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
         <button onclick="showProfile()" id="btn-profile">Профиль</button>
     </div>
-    <script src="script.js" defer></script>
+    <script>
+        // Функция для переключения контента
+        function showContent(contentId) {
+            // Скрываем все разделы
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Снимаем активный класс с кнопок
+            const buttons = document.querySelectorAll('.bottom-nav button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Показываем выбранный контент и активируем соответствующую кнопку
+            document.getElementById(contentId).classList.add('active');
+            document.getElementById('btn-' + contentId).classList.add('active');
+        }
+
+        // Функция для отображения профиля
+        function showProfile() {
+            showContent('profile');
+        }
+    </script>
 </body>
 </html>
