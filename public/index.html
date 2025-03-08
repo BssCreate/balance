@@ -172,28 +172,6 @@
             showContent('profile'); // Показываем раздел профиля
         }
 
-        function sendCode() {
-            const emailInput = document.getElementById('email-input');
-        
-            // Проверяем, что почта введена
-            const email = emailInput.value.trim();
-            if (email === '') {
-                alert('Пожалуйста, введите почту');
-                return;
-            }
-        
-            // Логика отправки кода
-            const verificationCode = generateVerificationCode();
-            console.log(`Код для ${email}: ${verificationCode}`);
-        
-            // Переход к следующему этапу
-            document.getElementById('email-step').style.display = 'none';
-            document.getElementById('code-step').style.display = 'block';
-            document.getElementById('user-email').textContent = email;
-        
-            // Дальше, вы можете добавить логику для отправки этого кода на почту
-        }
-        
         function generateVerificationCode() {
             // Генерируем случайный код из 6 цифр
             let code = '';
@@ -202,6 +180,28 @@
             }
             return code;
         }
+
+        function sendCode() {
+            const emailInput = document.getElementById('email-input');
+            const email = emailInput.value.trim();  // Получаем email
+            
+            if (email === '') {
+                alert('Пожалуйста, введите почту');
+                return;
+            }
+            
+            // Генерация кода
+            const verificationCode = generateVerificationCode();
+            console.log(`Код для ${email}: ${verificationCode}`);
+        
+            // Переход к следующему этапу
+            document.getElementById('email-step').style.display = 'none';
+            document.getElementById('code-step').style.display = 'block';
+            document.getElementById('user-email').textContent = email;
+        }
+
+        
+        
 
 
         
@@ -240,6 +240,7 @@
             }
         }
         
+        // Пример исправления для проверки и отображения шагов:
         function checkProfileExistence() {
             const email = document.getElementById('user-email').textContent;
             const spreadsheetId = '1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY'; // Замените на свой ID
@@ -253,14 +254,18 @@
                     const rows = data.values || [];
                     const existingProfile = rows.find(row => row[0] === email); // Проверка существующего профиля по почте
         
+                    // Прячем все шаги перед показом нужного
+                    document.getElementById('profile-step').style.display = 'none';
+                    document.getElementById('register-fields').style.display = 'none';
+                    document.getElementById('password-step').style.display = 'none';
+        
                     if (existingProfile) {
-                        // Профиль существует, показываем форму с автозаполнением почты и полем для пароля
+                        // Профиль существует, показываем поля для пароля
                         document.getElementById('password-step').style.display = 'block';
-                        document.getElementById('profile-email').textContent = email; // Отображаем почту
-                        document.getElementById('password-step').style.display = 'block'; // Показываем поля для пароля
+                        document.getElementById('profile-email').value = email; // Заполняем поле почты
                     } else {
-                        // Профиль не существует, показываем форму для регистрации
-                        document.getElementById('register-step').style.display = 'block';
+                        // Профиль не существует, показываем поля для регистрации
+                        document.getElementById('register-fields').style.display = 'block';
                     }
                 })
                 .catch(error => {
@@ -269,6 +274,7 @@
                 });
         }
         
+                
 
                
         // Функция, которая проверяет введенный код
