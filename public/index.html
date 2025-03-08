@@ -264,13 +264,17 @@
         }
     
         function register() {
-            const nickname = document.getElementById('nickname').value.trim();
-            const password = document.getElementById('reg-password').value.trim();
-    
-            if (nickname === '' || password === '') {
-                alert('Пожалуйста, заполните все поля');
+            const nicknameInput = document.getElementById('nickname');
+            const passwordInput = document.getElementById('reg-password');
+            
+            if (!nicknameInput || !passwordInput) {
+                console.error('Не найдены поля регистрации');
                 return;
             }
+            
+            const nickname = nicknameInput.value.trim();
+            const password = passwordInput.value.trim();
+
     
             const newUser = [nickname, userEmail, password];
     
