@@ -154,9 +154,18 @@
             document.getElementById('btn-' + contentId).classList.add('active');
         }
 
-        // Функция для отображения профиля
+        // Функция для отображения профиля с анимацией загрузки
         function showProfile() {
-            showContent('profile');
+            // Показываем анимацию загрузки
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('profile-content').style.display = 'none';
+
+            // Добавляем задержку перед показом профиля
+            setTimeout(function() {
+                // Скрываем анимацию и показываем контент профиля
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
+            }, 2000); // 2 секунды для задержки загрузки
         }
     </script>
 </body>
