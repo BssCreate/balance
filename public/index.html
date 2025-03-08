@@ -156,6 +156,11 @@
                 document.getElementById('profile-content').style.display = 'block';
             }, 2000); // 2 секунды для задержки
         }
+
+        // Включаем событие при загрузке страницы для того, чтобы сразу активировалась нужная вкладка
+        window.onload = function() {
+            showContent('news');  // Убедитесь, что правильный раздел активен по умолчанию
+        };
     </script>
 </body>
 </html>
