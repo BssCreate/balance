@@ -267,7 +267,6 @@
             console.log('Функция register() вызвана');
         
             const nicknameInput = document.querySelector('input#nickname');
-            const nickname = nicknameInput ? nicknameInput.value.trim() : '';
             const passwordInput = document.getElementById('reg-password');
         
             console.log('nicknameInput:', nicknameInput);
@@ -278,7 +277,7 @@
                 return;
             }
         
-            const nickname = nicknameInput.value?.trim();
+            const nickname = nicknameInput ? nicknameInput.value.trim() : '';
             const password = passwordInput.value?.trim();
         
             console.log('Nickname:', nickname);
