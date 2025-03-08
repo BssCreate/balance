@@ -173,97 +173,106 @@
         }
 
         // Функция, которая отправляет код на email
-function sendCode() {
-    const email = document.getElementById('email').value;
-    if (email.trim() === '') {
-        alert('Пожалуйста, введите почту');
-        return;
-    }
-
-    // Отправка кода на email (в данный момент выводим в консоль)
-    console.log(`Код отправлен на ${email}`);
-    
-    // Переход к следующему этапу
-    document.getElementById('email-step').style.display = 'none';
-    document.getElementById('code-step').style.display = 'block';
-    document.getElementById('user-email').textContent = email;
-}
-
-// Функция, которая проверяет введенный код
-function verifyCode() {
-    const code = Array.from(document.querySelectorAll('.otp-input')).map(input => input.value).join('');
-    
-    if (code.length !== 6) {
-        alert('Пожалуйста, введите весь код');
-        return;
-    }
-
-    console.log(`Введен код: ${code}`);
-
-    // Здесь будет логика проверки кода. Если код верный, проверим наличие профиля в базе данных
-    checkProfileExistence(code);
-}
-
-// Функция проверки существования профиля
-function checkProfileExistence(code) {
-    const email = document.getElementById('email').value;
-    
-    // Имитация запроса к базе данных Google Sheets
-    const profiles = [
-        { email: 'test@example.com', nickname: 'testuser', password: 'password123' }
-    ]; // Это пример, в реальности нужно использовать fetch API для получения данных из Google Sheets
-
-    const profile = profiles.find(profile => profile.email === email);
-
-    if (profile) {
-        // Профиль существует
-        document.getElementById('profile-fields').style.display = 'block';
-        document.getElementById('register-fields').style.display = 'none';
+        function sendCode() {
+            const emailInput = document.getElementById('email');
+            
+            if (!emailInput) {
+                alert('Поле email не найдено!');
+                return;
+            }
         
-        // Автозаполнение почты
-        document.getElementById('profile-email').value = profile.email;
-    } else {
-        // Профиль не существует
-        document.getElementById('profile-fields').style.display = 'none';
-        document.getElementById('register-fields').style.display = 'block';
-    }
-
-    // Переход к следующему этапу
-    document.getElementById('code-step').style.display = 'none';
-    document.getElementById('profile-step').style.display = 'block';
-}
-
-// Функция для входа
-function login() {
-    const email = document.getElementById('profile-email').value;
-    const password = document.getElementById('profile-password').value;
-
-    if (password.trim() === '') {
-        alert('Пожалуйста, введите пароль');
-        return;
-    }
-
-    console.log(`Вход с email: ${email} и паролем: ${password}`);
-
-    // Здесь можно добавить логику для авторизации через API
-    alert('Вход успешен');
-}
-
-// Функция для регистрации
-function register() {
-    const nickname = document.getElementById('nickname').value;
-    const password = document.getElementById('reg-password').value;
-
-    if (nickname.trim() === '' || password.trim() === '') {
-        alert('Пожалуйста, заполните все поля');
-        return;
-    }
-
-    console.log(`Регистрация с ником: ${nickname} и паролем: ${password}`);
-
-    // Здесь можно добавить логику для регистрации через API
-    alert('Регистрация успешна');
-}
+            const email = emailInput.value.trim(); // Получаем значение email и удаляем пробелы по краям
+            
+            if (email === '') {
+                alert('Пожалуйста, введите почту');
+                return;
+            }
+        
+            // Отправка кода на email (в данный момент выводим в консоль)
+            console.log(`Код отправлен на ${email}`);
+            
+            // Переход к следующему этапу
+            document.getElementById('email-step').style.display = 'none';
+            document.getElementById('code-step').style.display = 'block';
+            document.getElementById('user-email').textContent = email;
+        }
+        
+        
+        // Функция, которая проверяет введенный код
+        function verifyCode() {
+            const code = Array.from(document.querySelectorAll('.otp-input')).map(input => input.value).join('');
+            
+            if (code.length !== 6) {
+                alert('Пожалуйста, введите весь код');
+                return;
+            }
+        
+            console.log(`Введен код: ${code}`);
+        
+            // Здесь будет логика проверки кода. Если код верный, проверим наличие профиля в базе данных
+            checkProfileExistence(code);
+        }
+        
+        // Функция проверки существования профиля
+        function checkProfileExistence(code) {
+            const email = document.getElementById('email').value;
+            
+            // Имитация запроса к базе данных Google Sheets
+            const profiles = [
+                { email: 'test@example.com', nickname: 'testuser', password: 'password123' }
+            ]; // Это пример, в реальности нужно использовать fetch API для получения данных из Google Sheets
+        
+            const profile = profiles.find(profile => profile.email === email);
+        
+            if (profile) {
+                // Профиль существует
+                document.getElementById('profile-fields').style.display = 'block';
+                document.getElementById('register-fields').style.display = 'none';
+                
+                // Автозаполнение почты
+                document.getElementById('profile-email').value = profile.email;
+            } else {
+                // Профиль не существует
+                document.getElementById('profile-fields').style.display = 'none';
+                document.getElementById('register-fields').style.display = 'block';
+            }
+        
+            // Переход к следующему этапу
+            document.getElementById('code-step').style.display = 'none';
+            document.getElementById('profile-step').style.display = 'block';
+        }
+        
+        // Функция для входа
+        function login() {
+            const email = document.getElementById('profile-email').value;
+            const password = document.getElementById('profile-password').value;
+        
+            if (password.trim() === '') {
+                alert('Пожалуйста, введите пароль');
+                return;
+            }
+        
+            console.log(`Вход с email: ${email} и паролем: ${password}`);
+        
+            // Здесь можно добавить логику для авторизации через API
+            alert('Вход успешен');
+        }
+        
+        // Функция для регистрации
+        function register() {
+            const nickname = document.getElementById('nickname').value;
+            const password = document.getElementById('reg-password').value;
+        
+            if (nickname.trim() === '' || password.trim() === '') {
+                alert('Пожалуйста, заполните все поля');
+                return;
+            }
+        
+            console.log(`Регистрация с ником: ${nickname} и паролем: ${password}`);
+        
+            // Здесь можно добавить логику для регистрации через API
+            alert('Регистрация успешна');
+        }
 
     </script>
 </body>
