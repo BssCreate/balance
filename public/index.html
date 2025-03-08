@@ -174,24 +174,24 @@
 
         // Функция для отправки кода на почту
         function sendCode() {
-            // Находим элемент с id=email
-            const emailInput = document.getElementById('email');
+            const emailInput = document.getElementById('email');  // Ищем элемент с id="email"
             
-            // Проверяем, что emailInput найден
+            // Логирование для проверки, что элемент существует
+            console.log(emailInput); 
+            
             if (!emailInput) {
-                console.error('Элемент с id="email" не найден!');
+                alert('Поле с email не найдено!');
                 return;
             }
         
-            // Получаем значение и проверяем его на пустоту
-            const email = emailInput.value.trim();
+            const email = emailInput.value.trim(); // Получаем значение email и удаляем пробелы по краям
             
             if (email === '') {
                 alert('Пожалуйста, введите почту');
                 return;
             }
         
-            // Логика для отправки кода (пока просто выводим в консоль)
+            // Отправка кода на почту (пока выводим в консоль)
             console.log(`Код отправлен на ${email}`);
             
             // Переход ко следующему этапу
