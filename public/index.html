@@ -74,7 +74,7 @@
                 <h2>Вход или регистрация</h2>
                 <div id="email-step">
                     <div class="input-group">
-                        <input type="email" id="email" placeholder="Введите почту">
+                        <input type="email" id="user-email" placeholder="Введите почту">
                     </div>
                     <button onclick="sendCode()">Отправить код</button>
                 </div>
@@ -122,7 +122,7 @@
 
         // Функция отправки кода на почту (заглушка)
         function sendCode() {
-            const email = document.getElementById('email').value.trim(); // Убираем лишние пробелы
+            const email = document.getElementById('user-email').value.trim(); // Убираем лишние пробелы
 
             if (email === "") {
                 alert("Пожалуйста, введите почту.");
