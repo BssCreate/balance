@@ -53,3 +53,26 @@ async function register() {
     const data = await response.json();
     alert(data.success ? "Регистрация успешна!" : "Ошибка: " + data.message);
 }
+
+function showContent(section) {
+             document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+             document.getElementById(section).classList.add('active');
+         }
+ 
+         function showProfile() {        function showProfile() {
+             document.getElementById("loading").style.display = "block";
+             document.getElementById("profile-content").style.display = "none";
+             document.getElementById("auth-form").style.display = "none";
+         
+             setTimeout(() => {
+                 document.getElementById("loading").style.display = "none";
+         
+                 if (currentUser) {
+                     document.getElementById("nickname").textContent = currentUser.nickname;
+                     document.getElementById("email").textContent = currentUser.email;
+                     document.getElementById("profile-content").style.display = "block";
+                 } else {
+                     document.getElementById("auth-form").style.display = "block";
+                 }
+             }, 2000);
+         }
