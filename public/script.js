@@ -17,13 +17,22 @@ function showContent(contentId) {
     document.getElementById(`btn-${contentId}`).classList.add("active");
 }
 
-// Показать профиль
+document.addEventListener("DOMContentLoaded", function() {
+    console.log('DOMContentLoaded');
+    showProfile();
+});
+
 function showProfile() {
+    console.log('showProfile called'); // Проверка, вызывается ли функция
+
+    // Показать индикатор загрузки и скрыть контент профиля
     document.getElementById("loading").style.display = "block";
     document.getElementById("profile-content").style.display = "none";
     document.getElementById("auth-form").style.display = "none";
 
     const userEmail = localStorage.getItem("email");
+
+    // Проверяем, есть ли сохраненный email в localStorage
     if (userEmail) {
         checkProfile(userEmail);
     } else {
@@ -34,7 +43,7 @@ function showProfile() {
     }
 }
 
-// Проверка профиля пользователя через Google Apps Script API
+// Проверка профиля пользователя
 function checkProfile(email) {
     fetch(`${apiUrl}?action=checkProfile&email=${email}`)
         .then(response => response.json())
@@ -52,6 +61,7 @@ function checkProfile(email) {
             }
         });
 }
+
 
 // Получение кода и отправка на email
 document.getElementById("sendCodeBtn").addEventListener("click", function() {
