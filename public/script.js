@@ -55,24 +55,39 @@ async function register() {
 }
 
 function showContent(section) {
-             document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
-             document.getElementById(section).classList.add('active');
-         }
+    // Убираем активность у всех секций
+    document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+    
+    // Показываем нужную секцию
+    document.getElementById(section).classList.add('active');
+
+    // Обновляем активное состояние кнопок навигации
+    document.querySelectorAll('.bottom-nav button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btn-' + section).classList.add('active');
+}
  
-         function showProfile() {        function showProfile() {
-             document.getElementById("loading").style.display = "block";
-             document.getElementById("profile-content").style.display = "none";
-             document.getElementById("auth-form").style.display = "none";
-         
-             setTimeout(() => {
-                 document.getElementById("loading").style.display = "none";
-         
-                 if (currentUser) {
-                     document.getElementById("nickname").textContent = currentUser.nickname;
-                     document.getElementById("email").textContent = currentUser.email;
-                     document.getElementById("profile-content").style.display = "block";
-                 } else {
-                     document.getElementById("auth-form").style.display = "block";
-                 }
-             }, 2000);
-         }
+function showProfile() {
+    document.getElementById("loading").style.display = "block";
+    document.getElementById("profile-content").style.display = "none";
+    document.getElementById("auth-form").style.display = "none";
+
+    setTimeout(() => {
+        document.getElementById("loading").style.display = "none";
+
+        if (currentUser) {
+            document.getElementById("nickname").textContent = currentUser.nickname;
+            document.getElementById("email").textContent = currentUser.email;
+            document.getElementById("profile-content").style.display = "block";
+        } else {
+            document.getElementById("auth-form").style.display = "block";
+        }
+    }, 2000);
+
+    // Меняем активное состояние кнопок
+    document.querySelectorAll('.bottom-nav button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btn-profile').classList.add('active');
+
+    // Убираем активность у всех секций и активируем профиль
+    document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+    document.getElementById("profile").classList.add("active");
+}
