@@ -175,68 +175,25 @@
         }
 
         function sendCode() {
-            const emailInput = document.getElementById('email-input');
-        
-            // Проверяем, что почта введена
+            const emailInput = document.getElementById('email');
             const email = emailInput.value.trim();
-            if (email === '') {
+        
+            if (!email) {
                 alert('Пожалуйста, введите почту');
                 return;
             }
         
-            // Логика отправки кода
-            const verificationCode = generateVerificationCode();
-            console.log(`Код для ${email}: ${verificationCode}`);
+            // Генерация и сохранение кода
+            verificationCode = generateVerificationCode();
+            console.log('Generated verification code:', verificationCode); // Печатаем код в консоль (для отладки)
         
-            // Переход к следующему этапу
+            // Здесь отправить код на почту (пока только выводим в консоль)
+            alert('Код отправлен на почту!');
+        
+            // Переход к следующему шагу
             document.getElementById('email-step').style.display = 'none';
             document.getElementById('code-step').style.display = 'block';
-            document.getElementById('user-email').textContent = email;
-        
-            // Дальше, вы можете добавить логику для отправки этого кода на почту
-        }
-        
-        function generateVerificationCode() {
-            // Генерируем случайный код из 6 цифр
-            let code = '';
-            for (let i = 0; i < 6; i++) {
-                code += Math.floor(Math.random() * 10);
-            }
-            return code;
-        }
-
-
-
-        function checkProfileExistence(email) {
-            // Пример проверки существования профиля
-            fetch('https://sheets.googleapis.com/v4/spreadsheets/YOUR_GOOGLE_SHEET_ID/values/UserProfiles?key=YOUR_API_KEY')
-                .then(response => response.json())
-                .then(data => {
-                    const profiles = data.values || [];
-                    const existingProfile = profiles.find(profile => profile[1] === email);
-        
-                    if (existingProfile) {
-                        // Если профиль найден, показываем профиль и пароль
-                        document.getElementById('profile-step').style.display = 'block';
-                        document.getElementById('profile-fields').style.display = 'block';
-                        document.getElementById('register-fields').style.display = 'none';
-        
-                        // Автозаполнение почты
-                        document.getElementById('profile-email').value = email; // Показ почты
-                        document.getElementById('profile-email').readonly = true; // Невозможно редактировать
-        
-                        // Запрос пароля
-                        document.getElementById('profile-password').focus();
-                    } else {
-                        // Если профиля нет, показываем форму регистрации
-                        document.getElementById('profile-step').style.display = 'block';
-                        document.getElementById('profile-fields').style.display = 'none';
-                        document.getElementById('register-fields').style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка при проверке профиля:', error);
-                });
+            document.getElementById('user-email').textContent = email; // Отображаем почту в тексте
         }
         
         function moveNext(index) {
@@ -249,7 +206,7 @@
         
             // После того как заполнили последний ввод, проверяем все поля на заполненность
             if (index === inputs.length - 1) {
-                checkCode();  // Теперь проверка кода только после того, как все поля заполнены
+                setTimeout(checkCode, 200); // Задержка в 200мс, чтобы дать время последнему символу отобразиться
             }
         }
         
@@ -259,11 +216,11 @@
         
             // Проверка на то, что все поля заполнены
             if (enteredCode.length === 6) {
-                const generatedCode = '123456'; // Ваш сгенерированный код
-        
-                if (enteredCode === generatedCode) {
+                if (enteredCode === verificationCode) {
                     alert('Код верный!');
                     // Переход к следующему этапу (например, показать поля почты или регистрацию)
+                    // Допустим, проверка в базе данных
+                    checkProfileExistence();
                 } else {
                     alert('Неверный код!');
                     // Очистить поля ввода
@@ -273,7 +230,36 @@
                 alert('Пожалуйста, введите весь код!');
             }
         }
-
+        
+        function checkProfileExistence() {
+            const email = document.getElementById('user-email').textContent;
+            const spreadsheetId = '1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY'; // Замените на свой ID
+            const range = 'UserProfiles!A:B'; // Поменяйте на ваш диапазон данных (например, колонки A и B для почты и пароля)
+        
+            const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}?key=YOUR_API_KEY`;
+        
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const rows = data.values || [];
+                    const existingProfile = rows.find(row => row[0] === email); // Проверка существующего профиля по почте
+        
+                    if (existingProfile) {
+                        // Профиль существует, показываем форму с автозаполнением почты и полем для пароля
+                        document.getElementById('password-step').style.display = 'block';
+                        document.getElementById('profile-email').textContent = email; // Отображаем почту
+                        document.getElementById('password-step').style.display = 'block'; // Показываем поля для пароля
+                    } else {
+                        // Профиль не существует, показываем форму для регистрации
+                        document.getElementById('register-step').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching profile data:', error);
+                    alert('Произошла ошибка при проверке профиля.');
+                });
+        }
+        
 
                
         // Функция, которая проверяет введенный код
