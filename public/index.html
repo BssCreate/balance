@@ -66,10 +66,18 @@
         <div id="products" class="content">Раздел Услуги</div>
         <div id="news" class="content active">Раздел Новости</div>
         <div id="profile" class="content">
-            <h1>Профиль</h1>
             <div id="profile-data">
                 <p><strong>Ник:</strong> <span id="nickname"></span></p>
                 <p><strong>Почта:</strong> <span id="email"></span></p>
+            </div>
+            <div id="auth-form" style="display: none;">
+                <h2>Вход или регистрация</h2>
+                <div id="email-step">
+                    <div class="input-group">
+                        <input type="email" id="email" placeholder="Введите почту">
+                    </div>
+                    <button onclick="sendCode()">Отправить код</button>
+                </div>
             </div>
         </div>
     </div>
@@ -77,7 +85,7 @@
     <div class="bottom-nav">
         <button onclick="showContent('products')" id="btn-products">Услуги</button>
         <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
-        <button onclick="showContent('profile')" id="btn-profile">Профиль</button>
+        <button onclick="showProfile()" id="btn-profile">Профиль</button>
     </div>
 
     <script>
@@ -94,6 +102,33 @@
             // Показываем выбранный контент и активируем соответствующую кнопку
             document.getElementById(contentId).classList.add('active');
             document.getElementById('btn-' + contentId).classList.add('active');
+        }
+
+        // Функция для отображения профиля или формы регистрации
+        function showProfile() {
+            // Пытаемся загрузить данные профиля (можно заменить на реальный запрос)
+            const profileExists = false;  // Флаг, который будет проверять, есть ли профиль
+            
+            if (profileExists) {
+                document.getElementById('profile-data').style.display = 'block';
+                document.getElementById('auth-form').style.display = 'none';
+            } else {
+                document.getElementById('profile-data').style.display = 'none';
+                document.getElementById('auth-form').style.display = 'block';
+            }
+
+            showContent('profile'); // Показываем раздел профиля
+        }
+
+        // Функция отправки кода на почту (заглушка)
+        function sendCode() {
+            const email = document.getElementById('email').value;
+            if (email) {
+                alert(`Код отправлен на почту: ${email}`);
+                // Здесь можно реализовать логику отправки кода на почту
+            } else {
+                alert("Пожалуйста, введите почту.");
+            }
         }
 
         // Включаем событие при загрузке страницы для того, чтобы сразу активировалась нужная вкладка
