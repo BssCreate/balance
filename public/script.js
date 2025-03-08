@@ -5,11 +5,11 @@ document.getElementById("btn-profile").addEventListener("click", showProfile);
 document.addEventListener('DOMContentLoaded', function() {
     const btnProfile = document.getElementById("btn-profile");
 
-    // Убедимся, что элемент существует
+    // Проверим, существует ли кнопка профиля
     if (btnProfile) {
         btnProfile.addEventListener("click", showProfile);
     } else {
-        console.log("Кнопка профиля не найдена!");
+        console.error("Кнопка профиля не найдена! Проверьте HTML.");
     }
 });
 
@@ -27,6 +27,7 @@ function showProfile() {
         document.getElementById("auth-form").style.display = "block";
     }, 2000); // Задержка для симуляции загрузки (2 секунды)
 }
+
 
 
 function sendCode() {
