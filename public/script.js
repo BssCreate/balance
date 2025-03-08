@@ -2,7 +2,19 @@ const apiUrl = "https://script.google.com/macros/s/AKfycbygLpe2adm1TqoLSIYRp0wjN
 
 document.getElementById("btn-profile").addEventListener("click", showProfile);
 
+document.addEventListener('DOMContentLoaded', function() {
+    const btnProfile = document.getElementById("btn-profile");
+
+    // Убедимся, что элемент существует
+    if (btnProfile) {
+        btnProfile.addEventListener("click", showProfile);
+    } else {
+        console.log("Кнопка профиля не найдена!");
+    }
+});
+
 function showProfile() {
+    console.log("Переход в профиль начался...");
     // Показываем анимацию загрузки
     document.getElementById("loading").style.display = "block";
     document.getElementById("profile-content").style.display = "none";
@@ -15,6 +27,7 @@ function showProfile() {
         document.getElementById("auth-form").style.display = "block";
     }, 2000); // Задержка для симуляции загрузки (2 секунды)
 }
+
 
 function sendCode() {
     const email = document.getElementById("email").value;
