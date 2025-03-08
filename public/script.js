@@ -3,17 +3,37 @@ const apiUrl = "https://script.google.com/macros/s/AKfycbxdivQqwTaFb3UTLTaIG95Ed
 // Переменная для хранения информации о текущем пользователе
 let currentUser = null;  
 
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("Скрипт загружен!");
+
+    // Навешиваем обработчик на кнопку "Получить код"
+    const sendCodeBtn = document.getElementById("sendCodeBtn");
+    if (sendCodeBtn) {
+        sendCodeBtn.addEventListener("click", sendCode);
+    }
+});
+
 async function sendCode() {
+    console.log("sendCode() вызван");
     const email = document.getElementById('email').value;
+    if (!email) {
+        alert("Введите email!");
+        return;
+    }
 
-    const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: "register", email, nickname: "", password: "" })
-    });
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: "register", email, nickname: "", password: "" })
+        });
 
-    const data = await response.json();
-    alert(data.success ? "Письмо отправлено" : "Ошибка: " + data.message);
+        const data = await response.json();
+        alert(data.success ? "Письмо отправлено" : "Ошибка: " + data.message);
+    } catch (error) {
+        console.error("Ошибка при отправке кода:", error);
+        alert("Ошибка соединения с сервером");
+    }
 }
 
 async function login() {
