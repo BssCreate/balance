@@ -123,7 +123,8 @@ function login() {
         .then(data => {
             if (data.success) {
                 localStorage.setItem("email", data.email);
-                showProfile();
+                showProfile();  // После успешного входа, показываем профиль
+                showContent('profile');  // Обязательно переключаем на страницу профиля
             } else {
                 alert("Неверный пароль");
             }
@@ -144,6 +145,7 @@ function register() {
                     alert("Регистрация успешна");
                     localStorage.setItem("email", data.email);
                     showProfile();
+                    showContent('profile');  // После регистрации переключаем на профиль
                 } else {
                     alert("Ошибка регистрации");
                 }
@@ -151,4 +153,9 @@ function register() {
     } else {
         alert("Пароли не совпадают");
     }
+}
+
+// Добавим переход на страницу профиля
+function showProfilePage() {
+    showContent('profile');
 }
