@@ -172,12 +172,15 @@
             showContent('profile'); // Показываем раздел профиля
         }
 
-        // Функция, которая отправляет код на email
+        // Функция для отправки кода на почту
         function sendCode() {
-            const emailInput = document.getElementById('email');
+            const emailInput = document.getElementById('email');  // Ищем элемент с id="email"
+            
+            // Логирование для проверки, что элемент существует
+            console.log(emailInput); 
             
             if (!emailInput) {
-                alert('Поле email не найдено!');
+                alert('Поле с email не найдено!');
                 return;
             }
         
@@ -188,15 +191,14 @@
                 return;
             }
         
-            // Отправка кода на email (в данный момент выводим в консоль)
+            // Отправка кода на почту (пока выводим в консоль)
             console.log(`Код отправлен на ${email}`);
             
-            // Переход к следующему этапу
+            // Переход ко следующему этапу
             document.getElementById('email-step').style.display = 'none';
             document.getElementById('code-step').style.display = 'block';
             document.getElementById('user-email').textContent = email;
         }
-        
         
         // Функция, которая проверяет введенный код
         function verifyCode() {
