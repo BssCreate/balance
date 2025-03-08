@@ -72,11 +72,13 @@
             </div>
             <div id="auth-form">
                 <h2>Вход или регистрация</h2>
-                <div id="email-step">
-                    <div class="input-group">
-                        <input type="email" id="email" placeholder="Адрес электронной почты">
+                <!-- Поле для ввода почты -->
+                    <div id="email-step">
+                        <div class="input-group">
+                            <input type="email" id="email-input" placeholder="Адрес электронной почты">
+                        </div>
+                        <button onclick="sendCode()">Получить код</button>
                     </div>
-                    <button onclick="sendCode()">Получить код</button>
                 </div>
             
                 <div id="code-step" style="display: none;">
@@ -175,27 +177,31 @@
         function sendCode() {
             // Находим поле ввода почты
             const emailInput = document.getElementById('email-input');
+            
+            // Проверка на существование emailInput
+            if (!emailInput) {
+                console.error("Элемент с id 'email-input' не найден!");
+                alert("Ошибка: поле для ввода почты не найдено.");
+                return;
+            }
+        
+            // Получаем значение почты
             const email = emailInput.value.trim();
         
-            // Проверка, что почта введена
+            // Проверка на пустую почту
             if (email === '') {
                 alert('Пожалуйста, введите почту');
                 return;
             }
         
-            // Если почта введена, скрываем текущий шаг и показываем следующий
-            document.getElementById('email-step').style.display = 'none';
-            document.getElementById('code-step').style.display = 'block';
-            
-            // Сохраняем почту в переменной и показываем в нужном месте
-            document.getElementById('user-email').textContent = email;
-        
             // Логика отправки кода (пока выводим в консоль)
             console.log(`Код отправлен на ${email}`);
             
-            // Переход к следующему шагу с кодом
-            // Здесь логика с таймером и верификацией кода
+            // Переход ко следующему этапу
+            document.getElementById('email-step').style.display = 'none';
+            document.getElementById('code-step').style.display = 'block';
         }
+
 
         function checkProfileExistence(email) {
             // Пример проверки существования профиля
