@@ -176,6 +176,13 @@
 
         function sendCode() {
             const emailInput = document.getElementById('email');
+            
+            // Проверка на существование элемента
+            if (!emailInput) {
+                console.error("Элемент с ID 'email' не найден.");
+                return;
+            }
+        
             const email = emailInput.value.trim();
         
             if (!email) {
@@ -195,6 +202,7 @@
             document.getElementById('code-step').style.display = 'block';
             document.getElementById('user-email').textContent = email; // Отображаем почту в тексте
         }
+
         
         function moveNext(index) {
             const inputs = document.querySelectorAll('.otp-input');
