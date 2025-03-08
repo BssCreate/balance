@@ -185,8 +185,8 @@
             }
         
             // Логика отправки кода
-            const verificationCode = generateVerificationCode();
-            console.log(`Код для ${email}: ${verificationCode}`);
+            generatedCode = generateVerificationCode();
+            console.log(`Код для ${email}: ${generatedCode}`);
         
             // Переход к следующему этапу
             document.getElementById('email-step').style.display = 'none';
@@ -257,8 +257,6 @@
         
             // Проверка на то, что все поля заполнены
             if (enteredCode.length === 6) {
-                const generatedCode = '123456'; // Ваш сгенерированный код
-        
                 if (enteredCode === generatedCode) {
                     alert('Код верный!');
                     // Переход к следующему этапу (например, показать поля почты или регистрацию)
