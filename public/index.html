@@ -103,9 +103,24 @@
     <script>
         let generatedCode = "";
         let codeExpiryTime = 0;
-        const sheetId = "1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY";  // Замените на ID вашей таблицы
-        const apiKey = "AIzaSyCKQu8dsfbIb_ABStJK8KXb1Oxzny-zaVA";  // Замените на ваш API-ключ
+        const sheetId = '1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY';  // Ваш ID таблицы
+        const range = 'UserProfiles';  // Диапазон данных в таблице (название листа)
+        const apiKey = 'AIzaSyCKQu8dsfbIb_ABStJK8KXb1Oxzny-zaVA';  // Ваш API ключ
         
+        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.values) {
+                const profiles = data.values;
+                console.log(profiles);  // Выведите данные в консоль, чтобы увидеть структуру ответа
+            } else {
+                console.log('Нет данных в таблице');
+            }
+          })
+          .catch(error => {
+            console.error('Ошибка:', error);
+          });
+
         // Функция для переключения контента
         function showContent(contentId) {
             const contents = document.querySelectorAll('.content');
