@@ -129,6 +129,47 @@
     <script>
         let generatedCode = "";
         let userEmail = "";
+
+        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.values) {
+                const profiles = data.values;
+                console.log(profiles);  // Выведите данные в консоль, чтобы увидеть структуру ответа
+            } else {
+                console.log('Нет данных в таблице');
+            }
+          })
+          .catch(error => {
+            console.error('Ошибка:', error);
+          });
+
+        // Функция для переключения контента
+        function showContent(contentId) {
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll('.bottom-nav button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            document.getElementById(contentId).classList.add('active');
+            document.getElementById('btn-' + contentId).classList.add('active');
+        }
+
+        // Функция отображения профиля или формы регистрации
+        function showProfile() {
+            const profileExists = false;  // Убедитесь, что здесь проверяется, существует ли профиль
+
+            if (profileExists) {
+                document.getElementById('profile-data').style.display = 'block';
+                document.getElementById('auth-form').style.display = 'none';
+            } else {
+                document.getElementById('profile-data').style.display = 'none';
+                document.getElementById('auth-form').style.display = 'block';
+            }
+
+            showContent('profile'); // Показываем раздел профиля
+        }
         
         function sendCode() {
             const emailInput = document.getElementById('email-input');
