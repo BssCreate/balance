@@ -205,8 +205,6 @@
             return code;
         }
 
-
-
         function checkProfileExistence(email) {
             // Пример проверки существования профиля
             fetch('https://sheets.googleapis.com/v4/spreadsheets/YOUR_GOOGLE_SHEET_ID/values/UserProfiles?key=YOUR_API_KEY')
@@ -249,7 +247,7 @@
         
             // После того как заполнили последний ввод, проверяем все поля на заполненность
             if (index === inputs.length - 1) {
-                checkCode();  // Теперь проверка кода только после того, как все поля заполнены
+                setTimeout(checkCode, 1000);  // Задержка в 1 секунду
             }
         }
         
@@ -273,56 +271,6 @@
                 alert('Пожалуйста, введите весь код!');
             }
         }
-
-
-               
-        // Функция, которая проверяет введенный код
-        function verifyCode() {
-            const code = Array.from(document.querySelectorAll('.otp-input')).map(input => input.value).join('');
-            
-            if (code.length !== 6) {
-                alert('Пожалуйста, введите весь код');
-                return;
-            }
-        
-            console.log(`Введен код: ${code}`);
-        
-            // Здесь будет логика проверки кода. Если код верный, проверим наличие профиля в базе данных
-            checkProfileExistence(code);
-        }
-        
-        // Функция для входа
-        function login() {
-            const email = document.getElementById('profile-email').value;
-            const password = document.getElementById('profile-password').value;
-        
-            if (password.trim() === '') {
-                alert('Пожалуйста, введите пароль');
-                return;
-            }
-        
-            console.log(`Вход с email: ${email} и паролем: ${password}`);
-        
-            // Здесь можно добавить логику для авторизации через API
-            alert('Вход успешен');
-        }
-        
-        // Функция для регистрации
-        function register() {
-            const nickname = document.getElementById('nickname').value;
-            const password = document.getElementById('reg-password').value;
-        
-            if (nickname.trim() === '' || password.trim() === '') {
-                alert('Пожалуйста, заполните все поля');
-                return;
-            }
-        
-            console.log(`Регистрация с ником: ${nickname} и паролем: ${password}`);
-        
-            // Здесь можно добавить логику для регистрации через API
-            alert('Регистрация успешна');
-        }
-
     </script>
 </body>
 </html>
