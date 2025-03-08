@@ -1,9 +1,4 @@
 const apiUrl = "https://script.google.com/macros/s/AKfycbxdivQqwTaFb3UTLTaIG95EdVyc1MHNFia99TAvMYHIMGNv51wt6Unltx26wdgebxPO/exec"; // Вставь ссылку API
-
-let verificationCode;
-let countdown;
-let countdownValue = 60;
-
 document.addEventListener("DOMContentLoaded", function() {
     showProfile();
 });
@@ -76,10 +71,17 @@ function sendVerificationCode(email) {
 
     // Сохраняем код для проверки позже
     verificationCode = generatedCode;
+
+    // Запускаем таймер для повторной отправки кода
+    startCountdown();
 }
 
 // Таймер для повторной отправки кода
+let countdownValue = 59;
+let countdown;
+
 function startCountdown() {
+    countdownValue = 59;
     countdown = setInterval(function() {
         if (countdownValue <= 0) {
             clearInterval(countdown);
@@ -102,7 +104,7 @@ function moveNext(index) {
 
 function verifyCode() {
     const enteredCode = Array.from(document.querySelectorAll(".otp-input")).map(input => input.value).join("");
-    if (enteredCode === verificationCode) {
+    if (enteredCode === verificationCode.toString()) {
         login();
     } else {
         alert("Неверный код");
@@ -153,9 +155,4 @@ function register() {
     } else {
         alert("Пароли не совпадают");
     }
-}
-
-// Добавим переход на страницу профиля
-function showProfilePage() {
-    showContent('profile');
 }
