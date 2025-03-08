@@ -174,24 +174,24 @@
 
         // Функция для отправки кода на почту
         function sendCode() {
-            const emailInput = document.getElementById('email');  // Ищем элемент с id="email"
+            // Находим элемент с id=email
+            const emailInput = document.getElementById('email');
             
-            // Логирование для проверки, что элемент существует
-            console.log(emailInput); 
-            
+            // Проверяем, что emailInput найден
             if (!emailInput) {
-                alert('Поле с email не найдено!');
+                console.error('Элемент с id="email" не найден!');
                 return;
             }
         
-            const email = emailInput.value.trim(); // Получаем значение email и удаляем пробелы по краям
+            // Получаем значение и проверяем его на пустоту
+            const email = emailInput.value.trim();
             
             if (email === '') {
                 alert('Пожалуйста, введите почту');
                 return;
             }
         
-            // Отправка кода на почту (пока выводим в консоль)
+            // Логика для отправки кода (пока просто выводим в консоль)
             console.log(`Код отправлен на ${email}`);
             
             // Переход ко следующему этапу
@@ -199,6 +199,7 @@
             document.getElementById('code-step').style.display = 'block';
             document.getElementById('user-email').textContent = email;
         }
+
         
         // Функция, которая проверяет введенный код
         function verifyCode() {
