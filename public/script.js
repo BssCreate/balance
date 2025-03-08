@@ -3,6 +3,19 @@ const apiUrl = "https://script.google.com/macros/s/AKfycbxdivQqwTaFb3UTLTaIG95Ed
 // Переменная для хранения информации о текущем пользователе
 let currentUser = null;  
 
+async function sendCode() {
+    const email = document.getElementById('email').value;
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: "register", email, nickname: "", password: "" })
+    });
+
+    const data = await response.json();
+    alert(data.success ? "Письмо отправлено" : "Ошибка: " + data.message);
+}
+
 async function login() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
