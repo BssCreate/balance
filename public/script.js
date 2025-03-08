@@ -10,20 +10,25 @@ let interval; // Таймер повторной отправки кода
 function showProfile() {
     showLoading(true); // Показываем анимацию загрузки
     setTimeout(() => {
-        const profileData = JSON.parse(localStorage.getItem('profileData'));
-
-        if (profileData) {
-            // Если профиль есть, показываем данные
-            document.getElementById('nickname').innerText = profileData.nickname;
-            document.getElementById('email').innerText = profileData.email;
-            document.getElementById('profile-content').style.display = 'block';
-            showLoading(false);
-        } else {
-            // Если профиля нет, показываем форму входа/регистрации
-            document.getElementById('auth-form').style.display = 'block';
-            document.getElementById('email-step').style.display = 'block';
-            showLoading(false);
-        }
+        checkUserProfile(email)
+            .then(profileData => {
+                if (profileData) {
+                    // Если профиль есть, показываем данные
+                    document.getElementById('nickname').innerText = profileData.nickname;
+                    document.getElementById('email').innerText = profileData.email;
+                    document.getElementById('profile-content').style.display = 'block';
+                    showLoading(false);
+                } else {
+                    // Если профиля нет, показываем форму входа/регистрации
+                    document.getElementById('auth-form').style.display = 'block';
+                    document.getElementById('email-step').style.display = 'block';
+                    showLoading(false);
+                }
+            })
+            .catch(() => {
+                showLoading(false);
+                alert('Ошибка при загрузке профиля');
+            });
     }, 1000);
 }
 
@@ -141,12 +146,17 @@ function login() {
     // Проверка пароля (если данные совпадают с тем, что в базе, то вход успешен)
     // В реальном приложении здесь будет запрос к серверу для проверки данных
 
-    // Сохраняем данные профиля в localStorage
-    const profileData = { nickname: 'User', email: email };
-    localStorage.setItem('profileData', JSON.stringify(profileData));
-
-    // Переходим к профилю
-    showProfile();
+    checkUserPassword(email, password)
+        .then(profileData => {
+            if (profileData) {
+                // Сохраняем данные профиля в сессионной переменной или другом месте
+                alert('Успешный вход');
+                showProfile();
+            } else {
+                alert('Неверный пароль');
+            }
+        })
+        .catch(() => alert('Ошибка при проверке пароля'));
 }
 
 // Регистрация нового пользователя
@@ -160,16 +170,32 @@ function register() {
         return;
     }
 
-    // Сохраняем данные профиля в localStorage
-    const profileData = { nickname, email, password };
-    localStorage.setItem('profileData', JSON.stringify(profileData));
-
-    // Переходим к профилю
-    showProfile();
+    // Регистрация пользователя в Google Таблицах
+    registerUser(email, nickname, password)
+        .then(() => {
+            alert('Регистрация успешна!');
+            showProfile();
+        })
+        .catch(() => alert('Ошибка при регистрации'));
 }
 
-// Переход на экран профиля при нажатии на кнопку
-function showProfileContent() {
-    document.getElementById('auth-form').style.display = 'none';
-    document.getElementById('profile-content').style.display = 'block';
+// Функция для проверки существующего пользователя в Google Таблицах
+async function checkUserProfile(email) {
+    const response = await fetch(`${apiUrl}?action=checkUser&email=${email}`);
+    const data = await response.json();
+    return data.profile || null; // Возвращаем профиль, если найден
+}
+
+// Функция для проверки пароля пользователя
+async function checkUserPassword(email, password) {
+    const response = await fetch(`${apiUrl}?action=checkPassword&email=${email}&password=${password}`);
+    const data = await response.json();
+    return data.profile || null; // Возвращаем профиль, если пароль совпадает
+}
+
+// Функция для регистрации пользователя в Google Таблицах
+async function registerUser(email, nickname, password) {
+    const response = await fetch(`${apiUrl}?action=registerUser&email=${email}&nickname=${nickname}&password=${password}`);
+    const data = await response.json();
+    return data.success; // Возвращаем успех или неудачу регистрации
 }
