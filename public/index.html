@@ -263,7 +263,7 @@
                 });
         }
     
-        function register() {
+        async function register() {
             console.log('Функция register() вызвана');
         
             const nicknameInput = document.querySelector('input#nickname');
@@ -277,8 +277,8 @@
                 return;
             }
         
-            const nickname = nicknameInput ? nicknameInput.value.trim() : '';
-            const password = passwordInput.value?.trim();
+            const nickname = nicknameInput.value.trim();
+            const password = passwordInput.value.trim();
         
             console.log('Nickname:', nickname);
             console.log('Password:', password);
@@ -289,11 +289,39 @@
             }
         
             console.log('Регистрация:', nickname, password);
-            
-            // Здесь логика отправки данных
+        
+            // Имитация email, так как на этом этапе он уже был введён ранее
+            const email = localStorage.getItem("userEmail");
+            if (!email) {
+                console.error("Ошибка: Email не найден!");
+                return;
+            }
+        
+            // **Добавление данных в Google Таблицы**
+            try {
+                const response = await fetch("https://script.google.com/macros/s/${sheetId}/exec", {
+                    method: "POST",
+                    body: JSON.stringify({ action: "register", nickname, email, password }),
+                    headers: { "Content-Type": "application/json" },
+                });
+        
+                const result = await response.json();
+                console.log("Ответ от сервера:", result);
+        
+                if (result.status === "success") {
+                    // **Сохранение данных в локальное хранилище**
+                    localStorage.setItem("userNickname", nickname);
+                    localStorage.setItem("userEmail", email);
+        
+                    // **Обновление страницы с профилем**
+                    loadProfileData([nickname, email]);
+                } else {
+                    console.error("Ошибка регистрации:", result.message);
+                }
+            } catch (error) {
+                console.error("Ошибка сети:", error);
+            }
         }
-
-
     
         function loadProfileData(user) {
             document.getElementById('profile-data').style.display = 'block';
