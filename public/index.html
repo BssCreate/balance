@@ -176,31 +176,28 @@
         function sendCode() {
             const emailInput = document.getElementById('email');
             
-            // Проверка на существование элемента
+            // Проверка, что элемент существует
             if (!emailInput) {
-                console.error("Элемент с ID 'email' не найден.");
+                console.error("Элемент с id='email' не найден.");
                 return;
             }
         
-            const email = emailInput.value.trim();
+            const email = emailInput.value.trim(); // Получаем почту из поля и убираем пробелы
         
             if (!email) {
                 alert('Пожалуйста, введите почту');
                 return;
             }
         
-            // Генерация и сохранение кода
-            verificationCode = generateVerificationCode();
-            console.log('Generated verification code:', verificationCode); // Печатаем код в консоль (для отладки)
-        
-            // Здесь отправить код на почту (пока только выводим в консоль)
-            alert('Код отправлен на почту!');
+            verificationCode = generateVerificationCode(); // Генерируем код
+            console.log('Generated verification code:', verificationCode);
         
             // Переход к следующему шагу
             document.getElementById('email-step').style.display = 'none';
             document.getElementById('code-step').style.display = 'block';
-            document.getElementById('user-email').textContent = email; // Отображаем почту в тексте
+            document.getElementById('user-email').textContent = email; // Отображаем почту
         }
+
 
         
         function moveNext(index) {
