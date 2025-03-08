@@ -103,35 +103,10 @@
     <script>
         let generatedCode = "";
         let codeExpiryTime = 0;
+        const sheetId = "1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY";  // Замените на ID вашей таблицы
+        const apiKey = "AIzaSyCKQu8dsfbIb_ABStJK8KXb1Oxzny-zaVA";  // Замените на ваш API-ключ
 
-        // Функция для переключения контента
-        function showContent(contentId) {
-            const contents = document.querySelectorAll('.content');
-            contents.forEach(content => content.classList.remove('active'));
-            
-            const buttons = document.querySelectorAll('.bottom-nav button');
-            buttons.forEach(button => button.classList.remove('active'));
-            
-            document.getElementById(contentId).classList.add('active');
-            document.getElementById('btn-' + contentId).classList.add('active');
-        }
-
-        // Функция отображения профиля или формы регистрации
-        function showProfile() {
-            const profileExists = false;  // Убедитесь, что здесь проверяется, существует ли профиль
-
-            if (profileExists) {
-                document.getElementById('profile-data').style.display = 'block';
-                document.getElementById('auth-form').style.display = 'none';
-            } else {
-                document.getElementById('profile-data').style.display = 'none';
-                document.getElementById('auth-form').style.display = 'block';
-            }
-
-            showContent('profile'); // Показываем раздел профиля
-        }
-
-        // Функция отправки кода на почту
+        // Функция для отправки кода на почту
         function sendCode() {
             const email = document.getElementById('user-email').value.trim();
 
@@ -168,7 +143,7 @@
 
             if (enteredCode === generatedCode) {
                 alert("Код подтвержден!");
-                // Переход к следующему этапу или профилю
+                checkProfileExistence(); // Проверяем, существует ли профиль
             } else {
                 alert("Неверный код. Попробуйте снова.");
                 // Очищаем все поля ввода
@@ -187,10 +162,35 @@
             }
         }
 
-        // Включаем событие при загрузке страницы для того, чтобы сразу активировалась нужная вкладка
-        window.onload = function() {
-            showContent('news');
-        };
+        // Функция для проверки существования профиля в Google Таблице
+        function checkProfileExistence() {
+            const email = document.getElementById('user-email').value.trim();
+
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/UserProfiles?key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const profiles = data.values;
+                    const profile = profiles.find(row => row[0] === email);
+
+                    if (profile) {
+                        // Если профиль существует
+                        const nickname = profile[1];
+                        const password = profile[2];
+                        
+                        // Показываем поля для входа
+                        document.getElementById('nickname').value = nickname;
+                        document.getElementById('user-email').value = email;
+                        document.getElementById('password').value = password;
+                        document.getElementById('register-step').style.display = 'none';
+                        document.getElementById('login-step').style.display = 'block';
+                    } else {
+                        // Если профиль не существует
+                        document.getElementById('nickname').value = "";
+                        document.getElementById('register-step').style.display = 'block';
+                    }
+                })
+                .catch(error => console.log("Error fetching profile data: ", error));
+        }
     </script>
 </body>
 </html>
