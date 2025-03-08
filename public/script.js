@@ -1,4 +1,4 @@
-const apiUrl = "https://script.google.com/macros/s/AKfycbxdivQqwTaFb3UTLTaIG95EdVyc1MHNFia99TAvMYHIMGNv51wt6Unltx26wdgebxPO/exec"; // Вставь ссылку API
+const apiUrl = "https://script.google.com/macros/s/AKfycbygLpe2adm1TqoLSIYRp0wjNu7F6dn53DCZ-nMlCRW-hKbR0UziRLNaf-lfQ_tun1ed/exec"; // Вставь ссылку API
 
 let timer;
 let timeRemaining = 59;
