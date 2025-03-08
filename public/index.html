@@ -65,24 +65,21 @@
     <div class="container">
         <div id="products" class="content">Раздел Услуги</div>
         <div id="news" class="content active">Раздел Новости</div>
-        <div id="profile-content" style="display: none;">
-            <h1>Профиль</h1>
+        <div id="profile" class="content">
             <div id="profile-data">
                 <p><strong>Ник:</strong> <span id="nickname"></span></p>
                 <p><strong>Почта:</strong> <span id="email"></span></p>
             </div>
-        
-            <div id="auth-form" style="display: none;">
+            <div id="auth-form">
                 <h2>Вход или регистрация</h2>
                 <!-- Поле для ввода почты -->
-                <div id="email-step">
-                    <div class="input-group">
-                        <input type="email" id="email-input" placeholder="Адрес электронной почты">
+                        <div id="email-step">
+                            <input type="email" id="email" placeholder="Введите почту">
+                            <button onclick="sendCode()">Получить код</button>
+                        </div>
                     </div>
-                    <button onclick="sendCode()">Получить код</button>
                 </div>
-                
-                <!-- Форма для ввода кода (пока скрыта) -->
+            
                 <div id="code-step" style="display: none;">
                     <p>Мы отправили письмо на <span id="user-email"></span></p>
                     <div>
@@ -94,27 +91,29 @@
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(5)">
                     </div>
                 </div>
-                
-                <!-- Если профиль есть, показываем почту и пароль -->
-                <div id="profile-fields" style="display: none;">
-                    <div class="input-group">
-                        <input type="email" id="profile-email" placeholder="Почта" readonly />
+            
+                <div id="profile-step" style="display: none;">
+                    <!-- Если профиль есть, показываем почту и пароль -->
+                    <div id="profile-fields" style="display: none;">
+                        <div class="input-group">
+                            <input type="email" id="profile-email" placeholder="Почта" readonly />
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="profile-password" placeholder="Пароль" />
+                        </div>
+                        <button onclick="login()">Войти</button>
                     </div>
-                    <div class="input-group">
-                        <input type="password" id="profile-password" placeholder="Пароль" />
+            
+                    <!-- Если профиля нет, показываем ник и пароль -->
+                    <div id="register-fields" style="display: none;">
+                        <div class="input-group">
+                            <input type="text" id="nickname" placeholder="Ник" />
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="reg-password" placeholder="Пароль" />
+                        </div>
+                        <button onclick="register()">Зарегистрироваться</button>
                     </div>
-                    <button onclick="login()">Войти</button>
-                </div>
-                
-                <!-- Если профиля нет, показываем ник и пароль -->
-                <div id="register-fields" style="display: none;">
-                    <div class="input-group">
-                        <input type="text" id="nickname" placeholder="Ник" />
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="reg-password" placeholder="Пароль" />
-                    </div>
-                    <button onclick="register()">Зарегистрироваться</button>
                 </div>
             </div>
         </div>
@@ -148,7 +147,6 @@
           });
 
         // Функция для переключения контента
-        // Функция для переключения контента
         function showContent(contentId) {
             const contents = document.querySelectorAll('.content');
             contents.forEach(content => content.classList.remove('active'));
@@ -156,22 +154,9 @@
             const buttons = document.querySelectorAll('.bottom-nav button');
             buttons.forEach(button => button.classList.remove('active'));
             
-            // Проверяем, существует ли элемент
-            const contentElement = document.getElementById(contentId);
-            if (contentElement) {
-                contentElement.classList.add('active');
-            } else {
-                console.error(`Element with id ${contentId} not found`);
-            }
-        
-            const buttonElement = document.getElementById('btn-' + contentId);
-            if (buttonElement) {
-                buttonElement.classList.add('active');
-            } else {
-                console.error(`Button with id btn-${contentId} not found`);
-            }
+            document.getElementById(contentId).classList.add('active');
+            document.getElementById('btn-' + contentId).classList.add('active');
         }
-
 
         // Функция отображения профиля или формы регистрации
         function showProfile() {
@@ -188,36 +173,30 @@
             showContent('profile'); // Показываем раздел профиля
         }
 
-        function generateVerificationCode() {
-            // Генерируем случайный код из 6 цифр
-            let code = '';
-            for (let i = 0; i < 6; i++) {
-                code += Math.floor(Math.random() * 10);
-            }
-            return code;
-        }
-
         function sendCode() {
-            const emailInput = document.getElementById('email-input');
-            const email = emailInput.value.trim();  // Получаем email
+            const emailInput = document.getElementById('email');
             
-            if (email === '') {
+            // Проверка, что элемент существует
+            if (!emailInput) {
+                console.error("Элемент с id='email' не найден.");
+                return;
+            }
+        
+            const email = emailInput.value.trim(); // Получаем почту из поля и убираем пробелы
+        
+            if (!email) {
                 alert('Пожалуйста, введите почту');
                 return;
             }
-            
-            // Генерация кода
-            const verificationCode = generateVerificationCode();
-            console.log(`Код для ${email}: ${verificationCode}`);
         
-            // Переход к следующему этапу
+            verificationCode = generateVerificationCode(); // Генерируем код
+            console.log('Generated verification code:', verificationCode);
+        
+            // Переход к следующему шагу
             document.getElementById('email-step').style.display = 'none';
             document.getElementById('code-step').style.display = 'block';
-            document.getElementById('user-email').textContent = email;
+            document.getElementById('user-email').textContent = email; // Отображаем почту
         }
-
-        
-        
 
 
         
@@ -256,7 +235,6 @@
             }
         }
         
-        // Пример исправления для проверки и отображения шагов:
         function checkProfileExistence() {
             const email = document.getElementById('user-email').textContent;
             const spreadsheetId = '1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY'; // Замените на свой ID
@@ -270,18 +248,14 @@
                     const rows = data.values || [];
                     const existingProfile = rows.find(row => row[0] === email); // Проверка существующего профиля по почте
         
-                    // Прячем все шаги перед показом нужного
-                    document.getElementById('profile-step').style.display = 'none';
-                    document.getElementById('register-fields').style.display = 'none';
-                    document.getElementById('password-step').style.display = 'none';
-        
                     if (existingProfile) {
-                        // Профиль существует, показываем поля для пароля
+                        // Профиль существует, показываем форму с автозаполнением почты и полем для пароля
                         document.getElementById('password-step').style.display = 'block';
-                        document.getElementById('profile-email').value = email; // Заполняем поле почты
+                        document.getElementById('profile-email').textContent = email; // Отображаем почту
+                        document.getElementById('password-step').style.display = 'block'; // Показываем поля для пароля
                     } else {
-                        // Профиль не существует, показываем поля для регистрации
-                        document.getElementById('register-fields').style.display = 'block';
+                        // Профиль не существует, показываем форму для регистрации
+                        document.getElementById('register-step').style.display = 'block';
                     }
                 })
                 .catch(error => {
@@ -290,7 +264,6 @@
                 });
         }
         
-                
 
                
         // Функция, которая проверяет введенный код
