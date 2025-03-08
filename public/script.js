@@ -1,4 +1,6 @@
-const apiUrl = "https://script.google.com/macros/s/AKfycbxdivQqwTaFb3UTLTaIG95EdVyc1MHNFia99TAvMYHIMGNv51wt6Unltx26wdgebxPO/exec"; // Вставь ссылку API
+const apiUrl = "https://script.google.com/macros/s/AKfycbxdivQqwTaFb3UTLTaIG95EdVyc1MHNFia99TAvMYHIMGNv51wt6Unltx26wdgebxPO/exec"; // Ваш API URL
+let verificationCode;  // Код для проверки
+
 document.addEventListener("DOMContentLoaded", function() {
     showProfile();
 });
@@ -32,9 +34,9 @@ function showProfile() {
     }
 }
 
-// Проверка профиля пользователя
+// Проверка профиля пользователя через Google Apps Script API
 function checkProfile(email) {
-    fetch(`${apiUrl}?email=${email}`)
+    fetch(`${apiUrl}?action=checkProfile&email=${email}`)
         .then(response => response.json())
         .then(data => {
             document.getElementById("loading").style.display = "none";
@@ -51,7 +53,7 @@ function checkProfile(email) {
         });
 }
 
-// Получение кода и отправка
+// Получение кода и отправка на email
 document.getElementById("sendCodeBtn").addEventListener("click", function() {
     const email = document.getElementById("email").value;
     if (email) {
@@ -61,8 +63,8 @@ document.getElementById("sendCodeBtn").addEventListener("click", function() {
 
 function sendVerificationCode(email) {
     // Генерируем случайный код для примера
-    const generatedCode = Math.floor(100000 + Math.random() * 900000);  // Генерация 6-значного кода
-    console.log(`Отправленный код: ${generatedCode}`);  // Отправляем код в консоль
+    verificationCode = Math.floor(100000 + Math.random() * 900000);  // Генерация 6-значного кода
+    console.log(`Отправленный код: ${verificationCode}`);  // Отправляем код в консоль
 
     // Переход на этап ввода кода
     document.getElementById("user-email").innerText = email;
@@ -70,9 +72,6 @@ function sendVerificationCode(email) {
     document.getElementById("code-step").style.display = "block";
 
     // Сохраняем код для проверки позже
-    verificationCode = generatedCode;
-
-    // Запускаем таймер для повторной отправки кода
     startCountdown();
 }
 
@@ -117,7 +116,7 @@ function resetCodeFields() {
     otpInputs.forEach(input => input.value = "");
 }
 
-// Вход
+// Вход в систему
 function login() {
     const password = document.getElementById("password").value;
     fetch(`${apiUrl}?action=login&email=${document.getElementById("user-email").innerText}&password=${password}`)
@@ -126,7 +125,7 @@ function login() {
             if (data.success) {
                 localStorage.setItem("email", data.email);
                 showProfile();  // После успешного входа, показываем профиль
-                showContent('profile');  // Обязательно переключаем на страницу профиля
+                showContent('profile');  // Переключаем на страницу профиля
             } else {
                 alert("Неверный пароль");
             }
