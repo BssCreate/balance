@@ -175,32 +175,36 @@
         }
 
         function sendCode() {
-            // Находим поле ввода почты
             const emailInput = document.getElementById('email-input');
-            
-            // Проверка на существование emailInput
-            if (!emailInput) {
-                console.error("Элемент с id 'email-input' не найден!");
-                alert("Ошибка: поле для ввода почты не найдено.");
-                return;
-            }
         
-            // Получаем значение почты
+            // Проверяем, что почта введена
             const email = emailInput.value.trim();
-        
-            // Проверка на пустую почту
             if (email === '') {
                 alert('Пожалуйста, введите почту');
                 return;
             }
         
-            // Логика отправки кода (пока выводим в консоль)
-            console.log(`Код отправлен на ${email}`);
-            
-            // Переход ко следующему этапу
+            // Логика отправки кода
+            const verificationCode = generateVerificationCode();
+            console.log(`Код для ${email}: ${verificationCode}`);
+        
+            // Переход к следующему этапу
             document.getElementById('email-step').style.display = 'none';
             document.getElementById('code-step').style.display = 'block';
+            document.getElementById('user-email').textContent = email;
+        
+            // Дальше, вы можете добавить логику для отправки этого кода на почту
         }
+        
+        function generateVerificationCode() {
+            // Генерируем случайный код из 6 цифр
+            let code = '';
+            for (let i = 0; i < 6; i++) {
+                code += Math.floor(Math.random() * 10);
+            }
+            return code;
+        }
+
 
 
         function checkProfileExistence(email) {
