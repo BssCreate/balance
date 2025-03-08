@@ -49,19 +49,7 @@
             display: none;
             text-align: center;
             padding: 20px;
-        }
-        .loader {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            font-size: 18px;
         }
         .input-group {
             margin: 10px 0;
@@ -84,7 +72,7 @@
         <div id="products" class="content">Раздел Услуги</div>
         <div id="news" class="content active">Раздел Новости</div>
         <div id="profile" class="content">
-            <div id="loading"><div class="loader"></div></div>
+            <div id="loading">Загрузка...</div>
             <div id="profile-content" style="display: none;">
                 <h1>Профиль</h1>
                 <div id="profile-data">
@@ -154,18 +142,18 @@
             document.getElementById('btn-' + contentId).classList.add('active');
         }
 
-        // Функция для отображения профиля с анимацией загрузки
+        // Функция для отображения профиля с текстом "Загрузка..."
         function showProfile() {
-            // Показываем анимацию загрузки
+            // Показываем текст "Загрузка..."
             document.getElementById('loading').style.display = 'block';
             document.getElementById('profile-content').style.display = 'none';
 
             // Добавляем задержку перед показом профиля
             setTimeout(function() {
-                // Скрываем анимацию и показываем контент профиля
+                // Скрываем текст "Загрузка..." и показываем контент профиля
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('profile-content').style.display = 'block';
-            }, 2000); // 2 секунды для задержки загрузки
+            }, 2000); // 2 секунды для задержки
         }
     </script>
 </body>
