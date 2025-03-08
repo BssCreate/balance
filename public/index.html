@@ -290,16 +290,17 @@
         
             console.log('Регистрация:', nickname, password);
         
-            // Имитация email, так как на этом этапе он уже был введён ранее
+            // Получаем email, который был введен ранее
             const email = localStorage.getItem("userEmail");
             if (!email) {
                 console.error("Ошибка: Email не найден!");
                 return;
             }
         
-            // **Добавление данных в Google Таблицы**
+            // **Отправка данных на сервер для регистрации**
             try {
-                const response = await fetch("https://script.google.com/macros/s/${sheetId}/exec", {
+                const sheetId = "1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY";  // Замените на свой реальный ID таблицы Google
+                const response = await fetch(`https://script.google.com/macros/s/${sheetId}/exec`, {
                     method: "POST",
                     body: JSON.stringify({ action: "register", nickname, email, password }),
                     headers: { "Content-Type": "application/json" },
@@ -309,12 +310,8 @@
                 console.log("Ответ от сервера:", result);
         
                 if (result.status === "success") {
-                    // **Сохранение данных в локальное хранилище**
-                    localStorage.setItem("userNickname", nickname);
-                    localStorage.setItem("userEmail", email);
-        
-                    // **Обновление страницы с профилем**
-                    loadProfileData([nickname, email]);
+                    // После успешной регистрации обновляем страницу профиля
+                    loadProfileData(result.user);
                 } else {
                     console.error("Ошибка регистрации:", result.message);
                 }
@@ -322,13 +319,24 @@
                 console.error("Ошибка сети:", error);
             }
         }
-    
+        
         function loadProfileData(user) {
-            document.getElementById('profile-data').style.display = 'block';
-            document.getElementById('profile-nickname').textContent = user[0]; // Ник
-            document.getElementById('profile-email').textContent = user[1]; // Почта
-            document.getElementById('auth-form').style.display = 'none';
+            // Предполагаем, что 'user' — это объект с данными пользователя
+            if (user) {
+                console.log('Загружаем данные пользователя:', user);
+        
+                // Отображаем данные профиля
+                document.getElementById('profile-data').style.display = 'block';
+                document.getElementById('nickname').textContent = user.nickname;
+                document.getElementById('email').textContent = user.email;
+        
+                // Прячем форму авторизации
+                document.getElementById('auth-form').style.display = 'none';
+            } else {
+                console.error('Ошибка: Данные пользователя не найдены');
+            }
         }
+
 
     </script>
 
