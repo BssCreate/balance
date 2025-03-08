@@ -148,6 +148,7 @@
           });
 
         // Функция для переключения контента
+        // Функция для переключения контента
         function showContent(contentId) {
             const contents = document.querySelectorAll('.content');
             contents.forEach(content => content.classList.remove('active'));
@@ -155,9 +156,22 @@
             const buttons = document.querySelectorAll('.bottom-nav button');
             buttons.forEach(button => button.classList.remove('active'));
             
-            document.getElementById(contentId).classList.add('active');
-            document.getElementById('btn-' + contentId).classList.add('active');
+            // Проверяем, существует ли элемент
+            const contentElement = document.getElementById(contentId);
+            if (contentElement) {
+                contentElement.classList.add('active');
+            } else {
+                console.error(`Element with id ${contentId} not found`);
+            }
+        
+            const buttonElement = document.getElementById('btn-' + contentId);
+            if (buttonElement) {
+                buttonElement.classList.add('active');
+            } else {
+                console.error(`Button with id btn-${contentId} not found`);
+            }
         }
+
 
         // Функция отображения профиля или формы регистрации
         function showProfile() {
