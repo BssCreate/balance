@@ -264,34 +264,35 @@
         }
     
         function register() {
-            const nicknameInput = document.getElementById('nickname');
-            const passwordInput = document.getElementById('reg-password');
-            
-            if (!nicknameInput || !passwordInput) {
-                console.error('Не найдены поля регистрации');
+            // Проверяем, существует ли сам блок регистрации
+            const registerFields = document.getElementById('register-fields');
+            if (!registerFields || registerFields.style.display === 'none') {
+                console.error('Ошибка: Поля регистрации скрыты или не найдены!');
                 return;
             }
-            
+        
+            // Получаем поля ввода
+            const nicknameInput = document.getElementById('nickname');
+            const passwordInput = document.getElementById('reg-password');
+        
+            if (!nicknameInput || !passwordInput) {
+                console.error('Ошибка: Поля ввода не найдены!');
+                return;
+            }
+        
             const nickname = nicknameInput.value.trim();
             const password = passwordInput.value.trim();
-
-    
-            const newUser = [nickname, userEmail, password];
-    
-            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=RAW&key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ values: [newUser] })
-            })
-            .then(response => response.json())
-            .then(() => {
-                alert('Регистрация успешна!');
-                loadProfileData(newUser);
-            })
-            .catch(error => {
-                console.error('Ошибка регистрации:', error);
-            });
+        
+            if (nickname === '' || password === '') {
+                console.error('Ошибка: Все поля должны быть заполнены');
+                return;
+            }
+        
+            console.log('Регистрация:', nickname, password);
+            
+            // Дальнейшая логика (например, сохранение в БД)
         }
+
     
         function loadProfileData(user) {
             document.getElementById('profile-data').style.display = 'block';
