@@ -45,12 +45,6 @@
         .content.active {
             display: block;
         }
-        #loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            font-size: 18px;
-        }
         .input-group {
             margin: 10px 0;
         }
@@ -72,51 +66,10 @@
         <div id="products" class="content">Раздел Услуги</div>
         <div id="news" class="content active">Раздел Новости</div>
         <div id="profile" class="content">
-            <div id="loading">Загрузка...</div>
-            <div id="profile-content" style="display: none;">
-                <h1>Профиль</h1>
-                <div id="profile-data">
-                    <p><strong>Ник:</strong> <span id="nickname"></span></p>
-                    <p><strong>Почта:</strong> <span id="email"></span></p>
-                </div>
-            </div>
-            <div id="auth-form" style="display: none;">
-                <h2>Вход или регистрация</h2>
-                <div id="email-step">
-                    <div class="input-group">
-                        <input type="email" id="email" placeholder="Адрес электронной почты">
-                    </div>
-                    <button onclick="sendCode()">Получить код</button>
-                </div>
-                <div id="code-step" style="display: none;">
-                    <p>Мы отправили письмо на <span id="user-email"></span></p>
-                    <div>
-                        <input type="text" maxlength="1" class="otp-input" oninput="moveNext(0)">
-                        <input type="text" maxlength="1" class="otp-input" oninput="moveNext(1)">
-                        <input type="text" maxlength="1" class="otp-input" oninput="moveNext(2)">
-                        <input type="text" maxlength="1" class="otp-input" oninput="moveNext(3)">
-                        <input type="text" maxlength="1" class="otp-input" oninput="moveNext(4)">
-                        <input type="text" maxlength="1" class="otp-input" oninput="moveNext(5)">
-                    </div>
-                </div>
-                <div id="password-step" style="display: none;">
-                    <div class="input-group">
-                        <input type="password" id="password" placeholder="Введите пароль">
-                    </div>
-                    <button onclick="login()">Войти</button>
-                </div>
-                <div id="register-step" style="display: none;">
-                    <div class="input-group">
-                        <input type="text" id="nickname" placeholder="Ник">
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="reg-password" placeholder="Пароль">
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="confirm-password" placeholder="Подтверждение пароля">
-                    </div>
-                    <button onclick="register()">Зарегистрироваться</button>
-                </div>
+            <h1>Профиль</h1>
+            <div id="profile-data">
+                <p><strong>Ник:</strong> <span id="nickname"></span></p>
+                <p><strong>Почта:</strong> <span id="email"></span></p>
             </div>
         </div>
     </div>
@@ -124,7 +77,7 @@
     <div class="bottom-nav">
         <button onclick="showContent('products')" id="btn-products">Услуги</button>
         <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
-        <button onclick="showProfile()" id="btn-profile">Профиль</button>
+        <button onclick="showContent('profile')" id="btn-profile">Профиль</button>
     </div>
 
     <script>
@@ -141,20 +94,6 @@
             // Показываем выбранный контент и активируем соответствующую кнопку
             document.getElementById(contentId).classList.add('active');
             document.getElementById('btn-' + contentId).classList.add('active');
-        }
-
-        // Функция для отображения профиля с текстом "Загрузка..."
-        function showProfile() {
-            // Показываем текст "Загрузка..."
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('profile-content').style.display = 'none';
-
-            // Добавляем задержку перед показом профиля
-            setTimeout(function() {
-                // Скрываем текст "Загрузка..." и показываем контент профиля
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('profile-content').style.display = 'block';
-            }, 2000); // 2 секунды для задержки
         }
 
         // Включаем событие при загрузке страницы для того, чтобы сразу активировалась нужная вкладка
