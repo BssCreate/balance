@@ -290,11 +290,16 @@
         
             console.log('Регистрация:', nickname, password);
         
-            // Получаем email, который был введен ранее
-            const email = localStorage.getItem("userEmail");
+            // Получаем email из localStorage
+            let email = localStorage.getItem("userEmail");
             if (!email) {
-                console.error("Ошибка: Email не найден!");
-                return;
+                // Если email не найден в localStorage, запросим его у пользователя
+                email = prompt("Введите ваш email:");
+                if (!email) {
+                    console.error("Ошибка: Email не введен!");
+                    return;
+                }
+                localStorage.setItem("userEmail", email); // Сохраняем email в localStorage
             }
         
             // **Проверка, существует ли уже пользователь с таким email в базе данных**
@@ -350,6 +355,7 @@
                 console.error('Ошибка: Данные пользователя не найдены');
             }
         }
+
 
 
 
