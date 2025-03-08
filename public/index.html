@@ -81,6 +81,8 @@
 </head>
 <body>
     <div class="container">
+        <div id="products" class="content">Раздел Услуги</div>
+        <div id="news" class="content active">Раздел Новости</div>
         <div id="profile" class="content">
             <div id="loading"><div class="loader"></div></div>
             <div id="profile-content" style="display: none;">
@@ -133,11 +135,31 @@
     </div>
 
     <div class="bottom-nav">
+        <button onclick="showContent('products')" id="btn-products">Услуги</button>
+        <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
         <button onclick="showProfile()" id="btn-profile">Профиль</button>
     </div>
+
     <script>
         let otpCode = "";
         let timer;
+
+        // Функция для отображения содержимого
+        function showContent(contentId) {
+            const contents = document.querySelectorAll('.content');
+            const buttons = document.querySelectorAll('.bottom-nav button');
+
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(contentId).classList.add('active');
+            document.getElementById(`btn-${contentId}`).classList.add('active');
+        }
 
         // Функция для отображения профиля
         function showProfile() {
