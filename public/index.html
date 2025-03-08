@@ -297,23 +297,37 @@
                 return;
             }
         
-            // **Отправка данных на сервер для регистрации**
+            // **Проверка, существует ли уже пользователь с таким email в базе данных**
             try {
                 const sheetId = "1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY";  // Замените на свой реальный ID таблицы Google
-                const response = await fetch(`https://script.google.com/macros/s/${sheetId}/exec`, {
-                    method: "POST",
-                    body: JSON.stringify({ action: "register", nickname, email, password }),
-                    headers: { "Content-Type": "application/json" },
-                });
-        
+                const response = await fetch(`https://script.google.com/macros/s/${sheetId}/exec?action=getUser&email=${email}`);
                 const result = await response.json();
                 console.log("Ответ от сервера:", result);
         
-                if (result.status === "success") {
-                    // После успешной регистрации обновляем страницу профиля
+                // Проверяем, существует ли пользователь
+                if (result.status === "userFound") {
+                    console.log("Пользователь уже существует, загрузка данных...");
                     loadProfileData(result.user);
+                } else if (result.status === "userNotFound") {
+                    console.log("Пользователь не найден, регистрация...");
+                    // Отправляем данные на сервер для регистрации
+                    const registerResponse = await fetch(`https://script.google.com/macros/s/${sheetId}/exec`, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "register", nickname, email, password }),
+                        headers: { "Content-Type": "application/json" },
+                    });
+        
+                    const registerResult = await registerResponse.json();
+                    console.log("Ответ от сервера (регистрация):", registerResult);
+        
+                    if (registerResult.status === "success") {
+                        // После успешной регистрации обновляем страницу профиля
+                        loadProfileData(registerResult.user);
+                    } else {
+                        console.error("Ошибка регистрации:", registerResult.message);
+                    }
                 } else {
-                    console.error("Ошибка регистрации:", result.message);
+                    console.error("Ошибка:", result.message);
                 }
             } catch (error) {
                 console.error("Ошибка сети:", error);
@@ -321,7 +335,7 @@
         }
         
         function loadProfileData(user) {
-            // Предполагаем, что 'user' — это объект с данными пользователя
+            // Загружаем данные профиля, если они успешно получены
             if (user) {
                 console.log('Загружаем данные пользователя:', user);
         
@@ -336,6 +350,7 @@
                 console.error('Ошибка: Данные пользователя не найдены');
             }
         }
+
 
 
     </script>
