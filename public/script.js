@@ -147,15 +147,3 @@ function register() {
                     showProfile();
                     showContent('profile');  // После регистрации переключаем на профиль
                 } else {
-                    alert("Ошибка регистрации");
-                }
-            });
-    } else {
-        alert("Пароли не совпадают");
-    }
-}
-
-// Добавим переход на страницу профиля
-function showProfilePage() {
-    showContent('profile');
-}
