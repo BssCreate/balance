@@ -128,106 +128,80 @@
 
     <script>
         let generatedCode = "";
-        let codeExpiryTime = 0;
-        const sheetId = '1XOe29zxWW0mgVrZQSAu-9TQ4i7dfvYOBkq7-VvWg2nY';  // Ваш ID таблицы
-        const range = 'UserProfiles';  // Диапазон данных в таблице (название листа)
-        const apiKey = 'AIzaSyCKQu8dsfbIb_ABStJK8KXb1Oxzny-zaVA';  // Ваш API ключ
+        let userEmail = "";
         
-        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`)
-          .then(response => response.json())
-          .then(data => {
-            if (data.values) {
-                const profiles = data.values;
-                console.log(profiles);  // Выведите данные в консоль, чтобы увидеть структуру ответа
-            } else {
-                console.log('Нет данных в таблице');
-            }
-          })
-          .catch(error => {
-            console.error('Ошибка:', error);
-          });
-
-        // Функция для переключения контента
-        function showContent(contentId) {
-            const contents = document.querySelectorAll('.content');
-            contents.forEach(content => content.classList.remove('active'));
-            
-            const buttons = document.querySelectorAll('.bottom-nav button');
-            buttons.forEach(button => button.classList.remove('active'));
-            
-            document.getElementById(contentId).classList.add('active');
-            document.getElementById('btn-' + contentId).classList.add('active');
-        }
-
-        // Функция отображения профиля или формы регистрации
-        function showProfile() {
-            const profileExists = false;  // Убедитесь, что здесь проверяется, существует ли профиль
-
-            if (profileExists) {
-                document.getElementById('profile-data').style.display = 'block';
-                document.getElementById('auth-form').style.display = 'none';
-            } else {
-                document.getElementById('profile-data').style.display = 'none';
-                document.getElementById('auth-form').style.display = 'block';
-            }
-
-            showContent('profile'); // Показываем раздел профиля
-        }
-
         function sendCode() {
             const emailInput = document.getElementById('email-input');
-        
-            // Проверяем, что почта введена
-            const email = emailInput.value.trim();
-            if (email === '') {
+            userEmail = emailInput.value.trim();
+    
+            if (userEmail === '') {
                 alert('Пожалуйста, введите почту');
                 return;
             }
-        
-            // Логика отправки кода
+    
+            // Генерация и сохранение кода
             generatedCode = generateVerificationCode();
-            console.log(`Код для ${email}: ${generatedCode}`);
-        
+            console.log(`Код для ${userEmail}: ${generatedCode}`);
+    
             // Переход к следующему этапу
             document.getElementById('email-step').style.display = 'none';
             document.getElementById('code-step').style.display = 'block';
-            document.getElementById('user-email').textContent = email;
-        
-            // Дальше, вы можете добавить логику для отправки этого кода на почту
+            document.getElementById('user-email').textContent = userEmail;
         }
-        
+    
         function generateVerificationCode() {
-            // Генерируем случайный код из 6 цифр
             let code = '';
             for (let i = 0; i < 6; i++) {
                 code += Math.floor(Math.random() * 10);
             }
             return code;
         }
-
+    
+        function moveNext(index) {
+            const inputs = document.querySelectorAll('.otp-input');
+    
+            if (inputs[index].value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+    
+            if (index === inputs.length - 1) {
+                setTimeout(checkCode, 500);
+            }
+        }
+    
+        function checkCode() {
+            const inputs = document.querySelectorAll('.otp-input');
+            const enteredCode = Array.from(inputs).map(input => input.value).join('');
+    
+            if (enteredCode.length === 6) {
+                if (enteredCode === generatedCode) {
+                    checkProfileExistence(userEmail);
+                } else {
+                    alert('Неверный код!');
+                    inputs.forEach(input => input.value = '');
+                }
+            } else {
+                alert('Пожалуйста, введите весь код!');
+            }
+        }
+    
         function checkProfileExistence(email) {
-            // Пример проверки существования профиля
-            fetch('https://sheets.googleapis.com/v4/spreadsheets/YOUR_GOOGLE_SHEET_ID/values/UserProfiles?key=YOUR_API_KEY')
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`)
                 .then(response => response.json())
                 .then(data => {
                     const profiles = data.values || [];
                     const existingProfile = profiles.find(profile => profile[1] === email);
-        
+    
+                    document.getElementById('code-step').style.display = 'none';
+                    document.getElementById('profile-step').style.display = 'block';
+    
                     if (existingProfile) {
-                        // Если профиль найден, показываем профиль и пароль
-                        document.getElementById('profile-step').style.display = 'block';
                         document.getElementById('profile-fields').style.display = 'block';
                         document.getElementById('register-fields').style.display = 'none';
-        
-                        // Автозаполнение почты
-                        document.getElementById('profile-email').value = email; // Показ почты
-                        document.getElementById('profile-email').readonly = true; // Невозможно редактировать
-        
-                        // Запрос пароля
+                        document.getElementById('profile-email').value = email;
+                        document.getElementById('profile-email').readOnly = true;
                         document.getElementById('profile-password').focus();
                     } else {
-                        // Если профиля нет, показываем форму регистрации
-                        document.getElementById('profile-step').style.display = 'block';
                         document.getElementById('profile-fields').style.display = 'none';
                         document.getElementById('register-fields').style.display = 'block';
                     }
@@ -236,39 +210,61 @@
                     console.error('Ошибка при проверке профиля:', error);
                 });
         }
-        
-        function moveNext(index) {
-            const inputs = document.querySelectorAll('.otp-input');
-        
-            // Если индекс существует и поле заполнено, переключаем фокус на следующее
-            if (inputs[index].value.length === 1 && index < inputs.length - 1) {
-                inputs[index + 1].focus();
-            }
-        
-            // После того как заполнили последний ввод, проверяем все поля на заполненность
-            if (index === inputs.length - 1) {
-                setTimeout(checkCode, 1000);  // Задержка в 1 секунду
-            }
+    
+        function login() {
+            const password = document.getElementById('profile-password').value;
+    
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    const profiles = data.values || [];
+                    const user = profiles.find(profile => profile[1] === userEmail && profile[2] === password);
+    
+                    if (user) {
+                        alert('Успешный вход!');
+                        loadProfileData(user);
+                    } else {
+                        alert('Неверный пароль!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка входа:', error);
+                });
         }
-        
-        function checkCode() {
-            const inputs = document.querySelectorAll('.otp-input');
-            const enteredCode = Array.from(inputs).map(input => input.value).join('');
-        
-            // Проверка на то, что все поля заполнены
-            if (enteredCode.length === 6) {
-                if (enteredCode === generatedCode) {
-                    alert('Код верный!');
-                    // Переход к следующему этапу (например, показать поля почты или регистрацию)
-                } else {
-                    alert('Неверный код!');
-                    // Очистить поля ввода
-                    inputs.forEach(input => input.value = '');
-                }
-            } else {
-                alert('Пожалуйста, введите весь код!');
+    
+        function register() {
+            const nickname = document.getElementById('nickname').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+    
+            if (nickname === '' || password === '') {
+                alert('Пожалуйста, заполните все поля');
+                return;
             }
+    
+            const newUser = [nickname, userEmail, password];
+    
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=RAW&key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ values: [newUser] })
+            })
+            .then(response => response.json())
+            .then(() => {
+                alert('Регистрация успешна!');
+                loadProfileData(newUser);
+            })
+            .catch(error => {
+                console.error('Ошибка регистрации:', error);
+            });
+        }
+    
+        function loadProfileData(user) {
+            document.getElementById('profile-data').style.display = 'block';
+            document.getElementById('nickname').textContent = user[0];
+            document.getElementById('email').textContent = user[1];
+            document.getElementById('auth-form').style.display = 'none';
         }
     </script>
+
 </body>
 </html>
