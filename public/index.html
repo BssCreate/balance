@@ -239,6 +239,35 @@
                 });
         }
         
+        function moveNext(index) {
+            const inputs = document.querySelectorAll('.otp-input');
+            
+            // Если индекс существует и поле заполнено, переключаем фокус на следующее
+            if (inputs[index].value.length === 1 && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+        
+            // После того как заполнили последний ввод, можно начать проверку кода
+            if (index === inputs.length - 1 && inputs[index].value.length === 1) {
+                checkCode();
+            }
+        }
+        
+        function checkCode() {
+            const inputs = document.querySelectorAll('.otp-input');
+            const enteredCode = Array.from(inputs).map(input => input.value).join('');
+            const generatedCode = '123456'; // Здесь будет ваш сгенерированный код
+        
+            // Проверка введённого кода
+            if (enteredCode === generatedCode) {
+                alert('Код верный!');
+                // Переход к следующему этапу (например, показать поля почты или регистрация)
+            } else {
+                alert('Неверный код!');
+                // Очистить поля ввода
+                inputs.forEach(input => input.value = '');
+            }
+        }
 
                
         // Функция, которая проверяет введенный код
