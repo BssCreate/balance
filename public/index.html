@@ -81,8 +81,6 @@
 </head>
 <body>
     <div class="container">
-        <div id="products" class="content">Раздел Услуги</div>
-        <div id="news" class="content active">Раздел Новости</div>
         <div id="profile" class="content">
             <div id="loading"><div class="loader"></div></div>
             <div id="profile-content" style="display: none;">
@@ -110,6 +108,7 @@
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(4)">
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(5)">
                     </div>
+                    <p id="timer">Отправить повторно через <span id="time">59</span> сек</p>
                 </div>
                 <div id="password-step" style="display: none;">
                     <div class="input-group">
@@ -134,10 +133,72 @@
     </div>
 
     <div class="bottom-nav">
-        <button onclick="showContent('products')" id="btn-products">Услуги</button>
-        <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
         <button onclick="showProfile()" id="btn-profile">Профиль</button>
     </div>
-    <script src="script.js" defer></script>
+    <script>
+        let otpCode = "";
+        let timer;
+
+        // Функция для отображения профиля
+        function showProfile() {
+            document.getElementById('loading').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('auth-form').style.display = 'block';
+            }, 2000);
+        }
+
+        // Отправить код
+        document.getElementById('sendCodeBtn').onclick = function() {
+            const email = document.getElementById('email').value;
+            if (email) {
+                // Генерация случайного кода (для консоли)
+                otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+                console.log("Отправленный код: " + otpCode);
+                
+                document.getElementById('user-email').innerText = email;
+                document.getElementById('email-step').style.display = 'none';
+                document.getElementById('code-step').style.display = 'block';
+
+                startTimer();
+            }
+        };
+
+        // Таймер для повторной отправки кода
+        function startTimer() {
+            let timeLeft = 59;
+            document.getElementById('time').innerText = timeLeft;
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('time').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('timer').innerText = "Код больше не доступен. Попробуйте снова.";
+                }
+            }, 1000);
+        }
+
+        // Переход между полями ввода OTP
+        function moveNext(index) {
+            const inputs = document.querySelectorAll('.otp-input');
+            if (inputs[index].value.length === 1 && index < 5) {
+                inputs[index + 1].focus();
+            }
+        }
+
+        // Войти
+        function login() {
+            const password = document.getElementById('password').value;
+            console.log('Вход с паролем: ', password);
+        }
+
+        // Зарегистрироваться
+        function register() {
+            const nickname = document.getElementById('nickname').value;
+            const regPassword = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            console.log('Регистрация: ', nickname, regPassword, confirmPassword);
+        }
+    </script>
 </body>
 </html>
