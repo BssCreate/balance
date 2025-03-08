@@ -65,17 +65,17 @@ document.getElementById("sendCodeBtn").addEventListener("click", function() {
 });
 
 function sendVerificationCode(email) {
-    fetch(`${apiUrl}?action=send_code&email=${email}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                verificationCode = data.code;
-                startCountdown();
-                document.getElementById("user-email").innerText = email;
-                document.getElementById("email-step").style.display = "none";
-                document.getElementById("code-step").style.display = "block";
-            }
-        });
+    // Генерируем случайный код для примера
+    const generatedCode = Math.floor(100000 + Math.random() * 900000);  // Генерация 6-значного кода
+    console.log(`Отправленный код: ${generatedCode}`);  // Отправляем код в консоль
+
+    // Переход на этап ввода кода
+    document.getElementById("user-email").innerText = email;
+    document.getElementById("email-step").style.display = "none";
+    document.getElementById("code-step").style.display = "block";
+
+    // Сохраняем код для проверки позже
+    verificationCode = generatedCode;
 }
 
 // Таймер для повторной отправки кода
@@ -147,3 +147,15 @@ function register() {
                     showProfile();
                     showContent('profile');  // После регистрации переключаем на профиль
                 } else {
+                    alert("Ошибка регистрации");
+                }
+            });
+    } else {
+        alert("Пароли не совпадают");
+    }
+}
+
+// Добавим переход на страницу профиля
+function showProfilePage() {
+    showContent('profile');
+}
