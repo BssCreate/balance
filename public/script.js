@@ -2,6 +2,7 @@ const apiUrl = "https://script.google.com/macros/s/AKfycbxdivQqwTaFb3UTLTaIG95Ed
 let verificationCode;  // Код для проверки
 
 document.addEventListener("DOMContentLoaded", function() {
+    console.log('DOMContentLoaded');
     showProfile();
 });
 
@@ -17,50 +18,63 @@ function showContent(contentId) {
     document.getElementById(`btn-${contentId}`).classList.add("active");
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    console.log('DOMContentLoaded');
-    showProfile();
-});
-
 function showProfile() {
-    console.log('showProfile called'); // Проверка, вызывается ли функция
+    console.log('showProfile called');
 
     // Показать индикатор загрузки и скрыть контент профиля
-    document.getElementById("loading").style.display = "block";
-    document.getElementById("profile-content").style.display = "none";
-    document.getElementById("auth-form").style.display = "none";
+    const loading = document.getElementById("loading");
+    const profileContent = document.getElementById("profile-content");
+    const authForm = document.getElementById("auth-form");
+
+    loading.style.display = "block";
+    profileContent.style.display = "none";
+    authForm.style.display = "none";
 
     const userEmail = localStorage.getItem("email");
+    console.log(`Email из localStorage: ${userEmail}`);
 
-    // Проверяем, есть ли сохраненный email в localStorage
     if (userEmail) {
+        console.log('Проверка профиля');
         checkProfile(userEmail);
     } else {
+        console.log('Нет сохраненного email, показываем форму авторизации');
         setTimeout(() => {
-            document.getElementById("loading").style.display = "none";
-            document.getElementById("auth-form").style.display = "block";
+            loading.style.display = "none";
+            authForm.style.display = "block";
         }, 2000);
     }
 }
 
 // Проверка профиля пользователя
 function checkProfile(email) {
+    console.log(`Проверка профиля для email: ${email}`);
     fetch(`${apiUrl}?action=checkProfile&email=${email}`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById("loading").style.display = "none";
+            console.log('Ответ от API:', data);
+            const loading = document.getElementById("loading");
+            const profileContent = document.getElementById("profile-content");
+            const authForm = document.getElementById("auth-form");
+
+            loading.style.display = "none";
             if (data.exists) {
-                document.getElementById("profile-content").style.display = "block";
+                console.log('Профиль найден, показываем профиль');
+                profileContent.style.display = "block";
                 document.getElementById("nickname").innerText = data.nickname;
                 document.getElementById("email").innerText = data.email;
             } else {
-                document.getElementById("auth-form").style.display = "block";
+                console.log('Профиль не найден, показываем форму регистрации');
+                authForm.style.display = "block";
                 document.getElementById("email-step").style.display = "none";
                 document.getElementById("password-step").style.display = "none";
                 document.getElementById("register-step").style.display = "block";
             }
+        })
+        .catch(error => {
+            console.error('Ошибка при проверке профиля:', error);
         });
 }
+
 
 
 // Получение кода и отправка на email
