@@ -325,10 +325,11 @@
     
         function loadProfileData(user) {
             document.getElementById('profile-data').style.display = 'block';
-            document.getElementById('nickname').textContent = user[0];
-            document.getElementById('email').textContent = user[1];
+            document.getElementById('profile-nickname').textContent = user[0]; // Ник
+            document.getElementById('profile-email').textContent = user[1]; // Почта
             document.getElementById('auth-form').style.display = 'none';
         }
+
     </script>
 
 </body>
