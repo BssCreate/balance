@@ -172,35 +172,65 @@
             showContent('profile'); // Показываем раздел профиля
         }
 
-        // Функция для отправки кода на почту
         function sendCode() {
-            const emailInput = document.getElementById('email');  // Ищем элемент с id="email"
-            
-            // Логирование для проверки, что элемент существует
-            console.log(emailInput); 
-            
-            if (!emailInput) {
-                alert('Поле с email не найдено!');
-                return;
-            }
+            // Находим поле ввода почты
+            const emailInput = document.getElementById('email-input');
+            const email = emailInput.value.trim();
         
-            const email = emailInput.value.trim(); // Получаем значение email и удаляем пробелы по краям
-            
+            // Проверка, что почта введена
             if (email === '') {
                 alert('Пожалуйста, введите почту');
                 return;
             }
         
-            // Отправка кода на почту (пока выводим в консоль)
-            console.log(`Код отправлен на ${email}`);
-            
-            // Переход ко следующему этапу
+            // Если почта введена, скрываем текущий шаг и показываем следующий
             document.getElementById('email-step').style.display = 'none';
             document.getElementById('code-step').style.display = 'block';
+            
+            // Сохраняем почту в переменной и показываем в нужном месте
             document.getElementById('user-email').textContent = email;
+        
+            // Логика отправки кода (пока выводим в консоль)
+            console.log(`Код отправлен на ${email}`);
+            
+            // Переход к следующему шагу с кодом
+            // Здесь логика с таймером и верификацией кода
         }
 
+        function checkProfileExistence(email) {
+            // Пример проверки существования профиля
+            fetch('https://sheets.googleapis.com/v4/spreadsheets/YOUR_GOOGLE_SHEET_ID/values/UserProfiles?key=YOUR_API_KEY')
+                .then(response => response.json())
+                .then(data => {
+                    const profiles = data.values || [];
+                    const existingProfile = profiles.find(profile => profile[1] === email);
         
+                    if (existingProfile) {
+                        // Если профиль найден, показываем профиль и пароль
+                        document.getElementById('profile-step').style.display = 'block';
+                        document.getElementById('profile-fields').style.display = 'block';
+                        document.getElementById('register-fields').style.display = 'none';
+        
+                        // Автозаполнение почты
+                        document.getElementById('profile-email').value = email; // Показ почты
+                        document.getElementById('profile-email').readonly = true; // Невозможно редактировать
+        
+                        // Запрос пароля
+                        document.getElementById('profile-password').focus();
+                    } else {
+                        // Если профиля нет, показываем форму регистрации
+                        document.getElementById('profile-step').style.display = 'block';
+                        document.getElementById('profile-fields').style.display = 'none';
+                        document.getElementById('register-fields').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при проверке профиля:', error);
+                });
+        }
+        
+
+               
         // Функция, которая проверяет введенный код
         function verifyCode() {
             const code = Array.from(document.querySelectorAll('.otp-input')).map(input => input.value).join('');
@@ -214,35 +244,6 @@
         
             // Здесь будет логика проверки кода. Если код верный, проверим наличие профиля в базе данных
             checkProfileExistence(code);
-        }
-        
-        // Функция проверки существования профиля
-        function checkProfileExistence(code) {
-            const email = document.getElementById('email').value;
-            
-            // Имитация запроса к базе данных Google Sheets
-            const profiles = [
-                { email: 'test@example.com', nickname: 'testuser', password: 'password123' }
-            ]; // Это пример, в реальности нужно использовать fetch API для получения данных из Google Sheets
-        
-            const profile = profiles.find(profile => profile.email === email);
-        
-            if (profile) {
-                // Профиль существует
-                document.getElementById('profile-fields').style.display = 'block';
-                document.getElementById('register-fields').style.display = 'none';
-                
-                // Автозаполнение почты
-                document.getElementById('profile-email').value = profile.email;
-            } else {
-                // Профиль не существует
-                document.getElementById('profile-fields').style.display = 'none';
-                document.getElementById('register-fields').style.display = 'block';
-            }
-        
-            // Переход к следующему этапу
-            document.getElementById('code-step').style.display = 'none';
-            document.getElementById('profile-step').style.display = 'block';
         }
         
         // Функция для входа
