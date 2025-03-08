@@ -78,6 +78,18 @@
                     </div>
                     <button onclick="sendCode()">Отправить код</button>
                 </div>
+                <div id="code-step" style="display: none;">
+                    <p>Мы отправили письмо на <span id="user-email-display"></span></p>
+                    <div>
+                        <input type="text" maxlength="1" class="otp-input" id="otp-0" oninput="moveNext(0)">
+                        <input type="text" maxlength="1" class="otp-input" id="otp-1" oninput="moveNext(1)">
+                        <input type="text" maxlength="1" class="otp-input" id="otp-2" oninput="moveNext(2)">
+                        <input type="text" maxlength="1" class="otp-input" id="otp-3" oninput="moveNext(3)">
+                        <input type="text" maxlength="1" class="otp-input" id="otp-4" oninput="moveNext(4)">
+                        <input type="text" maxlength="1" class="otp-input" id="otp-5" oninput="moveNext(5)">
+                    </div>
+                    <button onclick="verifyCode()">Проверить код</button>
+                </div>
             </div>
         </div>
     </div>
@@ -89,26 +101,25 @@
     </div>
 
     <script>
+        let generatedCode = "";
+        let codeExpiryTime = 0;
+
         // Функция для переключения контента
         function showContent(contentId) {
-            // Скрываем все разделы
             const contents = document.querySelectorAll('.content');
             contents.forEach(content => content.classList.remove('active'));
             
-            // Снимаем активный класс с кнопок
             const buttons = document.querySelectorAll('.bottom-nav button');
             buttons.forEach(button => button.classList.remove('active'));
             
-            // Показываем выбранный контент и активируем соответствующую кнопку
             document.getElementById(contentId).classList.add('active');
             document.getElementById('btn-' + contentId).classList.add('active');
         }
 
-        // Функция для отображения профиля или формы регистрации
+        // Функция отображения профиля или формы регистрации
         function showProfile() {
-            // Пытаемся загрузить данные профиля (можно заменить на реальный запрос)
-            const profileExists = false;  // Флаг, который будет проверять, есть ли профиль
-            
+            const profileExists = false;  // Убедитесь, что здесь проверяется, существует ли профиль
+
             if (profileExists) {
                 document.getElementById('profile-data').style.display = 'block';
                 document.getElementById('auth-form').style.display = 'none';
@@ -120,21 +131,65 @@
             showContent('profile'); // Показываем раздел профиля
         }
 
-        // Функция отправки кода на почту (заглушка)
+        // Функция отправки кода на почту
         function sendCode() {
-            const email = document.getElementById('user-email').value.trim(); // Убираем лишние пробелы
+            const email = document.getElementById('user-email').value.trim();
 
             if (email === "") {
                 alert("Пожалуйста, введите почту.");
             } else {
-                alert(`Код отправлен на почту: ${email}`);
-                // Здесь можно реализовать логику отправки кода на почту
+                generatedCode = Math.floor(100000 + Math.random() * 900000).toString(); // Генерируем 6-значный код
+                codeExpiryTime = Date.now() + 10 * 60 * 1000; // Код действует 10 минут
+
+                console.log(`Код отправлен на почту: ${email}`);
+                console.log(`Ваш код: ${generatedCode}`);
+
+                // Отображаем этап ввода кода
+                document.getElementById('user-email-display').textContent = email;
+                document.getElementById('email-step').style.display = 'none';
+                document.getElementById('code-step').style.display = 'block';
+            }
+        }
+
+        // Функция для перехода к следующему полю при вводе
+        function moveNext(index) {
+            const nextInput = document.getElementById(`otp-${index + 1}`);
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+
+        // Функция проверки введенного кода
+        function verifyCode() {
+            let enteredCode = "";
+            for (let i = 0; i < 6; i++) {
+                enteredCode += document.getElementById(`otp-${i}`).value.trim();
+            }
+
+            if (enteredCode === generatedCode) {
+                alert("Код подтвержден!");
+                // Переход к следующему этапу или профилю
+            } else {
+                alert("Неверный код. Попробуйте снова.");
+                // Очищаем все поля ввода
+                for (let i = 0; i < 6; i++) {
+                    document.getElementById(`otp-${i}`).value = "";
+                }
+            }
+
+            // Проверка срока действия кода
+            if (Date.now() > codeExpiryTime) {
+                alert("Код истек. Попробуйте отправить новый.");
+                // Сбросим форму для ввода кода
+                for (let i = 0; i < 6; i++) {
+                    document.getElementById(`otp-${i}`).value = "";
+                }
             }
         }
 
         // Включаем событие при загрузке страницы для того, чтобы сразу активировалась нужная вкладка
         window.onload = function() {
-            showContent('news');  // Убедитесь, что правильный раздел активен по умолчанию
+            showContent('news');
         };
     </script>
 </body>
