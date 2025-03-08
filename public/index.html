@@ -122,12 +122,13 @@
 
         // Функция отправки кода на почту (заглушка)
         function sendCode() {
-            const email = document.getElementById('email').value;
-            if (email) {
+            const email = document.getElementById('email').value.trim(); // Убираем лишние пробелы
+
+            if (email === "") {
+                alert("Пожалуйста, введите почту.");
+            } else {
                 alert(`Код отправлен на почту: ${email}`);
                 // Здесь можно реализовать логику отправки кода на почту
-            } else {
-                alert("Пожалуйста, введите почту.");
             }
         }
 
