@@ -163,9 +163,11 @@
 
         // Функция для отображения профиля
         function showProfile() {
+            // Показываем загрузку
             document.getElementById('loading').style.display = 'block';
             setTimeout(() => {
                 document.getElementById('loading').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
                 document.getElementById('auth-form').style.display = 'block';
             }, 2000);
         }
