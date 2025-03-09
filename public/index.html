@@ -128,10 +128,21 @@
     </div>
 
     <script>
-        const { createClient } = supabase;
-        const supabaseUrl = "https://hztrtojcuppjvljhchuj.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6dHJ0b2pjdXBwanZsamhjaHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0OTM0NDksImV4cCI6MjA1NzA2OTQ0OX0.jTJtWxGebKQSDTyRgbvOsvxwjFSKD4Z2rdtiA-N9vCE";
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        // Убедимся, что Supabase загружен
+        if (typeof supabase === "undefined") {
+            console.error("Supabase не загружен!");
+          } else {
+            console.log("Supabase загружен.");
+          }
+        
+          // Создание клиента Supabase
+          const { createClient } = supabase;
+          const supabaseUrl = "https://hztrtojcuppjvljhchuj.supabase.co";
+          const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6dHJ0b2pjdXBwanZsamhjaHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0OTM0NDksImV4cCI6MjA1NzA2OTQ0OX0.jTJtWxGebKQSDTyRgbvOsvxwjFSKD4Z2rdtiA-N9vCE";
+          
+          const supabase = createClient(supabaseUrl, supabaseKey);
+          
+          console.log("Supabase инициализирован", supabase);
 
 
         let codeExpiryTime = 0;
