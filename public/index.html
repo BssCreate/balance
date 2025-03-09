@@ -60,6 +60,7 @@
             margin: 0 5px;
         }
     </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <div class="container">
@@ -125,7 +126,6 @@
         <button onclick="showContent('news')" id="btn-news" class="active">Новости</button>
         <button onclick="showProfile()" id="btn-profile">Профиль</button>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
         const { createClient } = supabase;
         const supabaseUrl = "https://hztrtojcuppjvljhchuj.supabase.co";
