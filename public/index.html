@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROчаны</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
         body {
             margin: 0;
@@ -60,7 +61,6 @@
             margin: 0 5px;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <div class="container">
@@ -128,9 +128,11 @@
     </div>
 
     <script>
+        const { createClient } = supabase;
         const supabaseUrl = "https://hztrtojcuppjvljhchuj.supabase.co";
         const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6dHJ0b2pjdXBwanZsamhjaHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0OTM0NDksImV4cCI6MjA1NzA2OTQ0OX0.jTJtWxGebKQSDTyRgbvOsvxwjFSKD4Z2rdtiA-N9vCE";
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
 
         let codeExpiryTime = 0;
         const scriptId = "AKfycbyfWsPlB5AEO7brTvPDEd15sYvXHGtd2EOumeAUyA4kLzYIsbqfdz2Hy2FQWiXJ7ixa";  
