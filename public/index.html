@@ -59,7 +59,8 @@
             font-size: 20px;
             margin: 0 5px;
         }
-    </style>    
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
     <div class="container">
@@ -127,6 +128,10 @@
     </div>
 
     <script>
+        const supabaseUrl = "https://hztrtojcuppjvljhchuj.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6dHJ0b2pjdXBwanZsamhjaHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE0OTM0NDksImV4cCI6MjA1NzA2OTQ0OX0.jTJtWxGebKQSDTyRgbvOsvxwjFSKD4Z2rdtiA-N9vCE";
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
         let codeExpiryTime = 0;
         const scriptId = "AKfycbyfWsPlB5AEO7brTvPDEd15sYvXHGtd2EOumeAUyA4kLzYIsbqfdz2Hy2FQWiXJ7ixa";  
         let generatedCode = "";
@@ -215,114 +220,76 @@
         }
     
         // Функция проверки существования профиля
-        function checkProfileExistence(email) {
-            fetch(`https://script.google.com/macros/s/${scriptId}/exec?action=getUser&email=${email}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('code-step').style.display = 'none';
-                    document.getElementById('profile-step').style.display = 'block';
+        async function checkProfileExistence(email) {
+            let { data, error } = await supabase
+                .from('users')
+                .select('email, nickname')
+                .eq('email', email)
+                .single();
+            
+            document.getElementById('code-step').style.display = 'none';
+            document.getElementById('profile-step').style.display = 'block';
         
-                    if (data.status === "userFound") {
-                        document.getElementById('profile-fields').style.display = 'block';
-                        document.getElementById('register-fields').style.display = 'none';
-                        document.getElementById('profile-email').value = email;
-                        document.getElementById('profile-email').readOnly = true;
-                        document.getElementById('profile-password').focus();
-                    } else {
-                        document.getElementById('profile-fields').style.display = 'none';
-                        document.getElementById('register-fields').style.display = 'block';
-                    }
-                })
-                .catch(error => console.error('Ошибка при проверке профиля:', error));
+            if (data) {
+                document.getElementById('profile-fields').style.display = 'block';
+                document.getElementById('register-fields').style.display = 'none';
+                document.getElementById('profile-email').value = email;
+                document.getElementById('profile-password').focus();
+            } else {
+                document.getElementById('profile-fields').style.display = 'none';
+                document.getElementById('register-fields').style.display = 'block';
+            }
         }
+
     
         // Функция входа
-        function login() {
+        async function login() {
+            const email = document.getElementById('profile-email').value;
             const password = document.getElementById('profile-password').value;
         
-            fetch(`https://script.google.com/macros/s/${scriptId}/exec?action=login&email=${userEmail}&password=${password}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === "success") {
-                        alert('Успешный вход!');
-                        loadProfileData(data.user);
-                    } else {
-                        alert('Неверный пароль!');
-                    }
-                })
-                .catch(error => console.error('Ошибка входа:', error));
+            let { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('email', email)
+                .eq('password', password)
+                .single();
+        
+            if (data) {
+                alert('Успешный вход!');
+                loadProfileData(data);
+            } else {
+                alert('Неверный пароль!');
+            }
         }
+
         
         // Функция регистрации
         async function register() {
-            console.log('Функция register() вызвана');
+            const nickname = document.getElementById('nickname').value.trim();
+            const email = userEmail;
+            const password = document.getElementById('reg-password').value.trim();
         
-            const nicknameInput = document.querySelector('input#nickname');
-            const passwordInput = document.getElementById('reg-password');
+            let { error } = await supabase
+                .from('users')
+                .insert([{ email, nickname, password }]);
         
-            if (!nicknameInput || !passwordInput) {
-                console.error('Ошибка: Поля регистрации не найдены!');
-                return;
-            }
-        
-            const nickname = nicknameInput.value.trim();
-            const password = passwordInput.value.trim();
-        
-            if (!nickname || !password) {
-                console.error('Ошибка: Все поля должны быть заполнены');
-                return;
-            }
-        
-            console.log('Регистрация:', nickname, password);
-        
-            // Получаем email
-            let email = userEmail || prompt("Введите ваш email:");
-            if (!email) {
-                console.error("Ошибка: Email не введен!");
-                return;
-            }
-        
-            // Проверка существования пользователя
-            try {
-                const response = await fetch(`https://script.google.com/macros/s/${scriptId}/exec?action=getUser&email=${email}`);
-                const result = await response.json();
-        
-                if (result.status === "userFound") {
-                    console.log("Пользователь уже существует, загрузка данных...");
-                    loadProfileData(result.user);
-                } else {
-                    console.log("Пользователь не найден, регистрация...");
-                    // Отправляем данные для регистрации
-                    const registerResponse = await fetch(`https://script.google.com/macros/s/${scriptId}/exec`, {
-                        method: "POST",
-                        body: JSON.stringify({ action: "register", nickname, email, password }),
-                        headers: { "Content-Type": "application/json" },
-                    });
-        
-                    const registerResult = await registerResponse.json();
-                    if (registerResult.status === "success") {
-                        loadProfileData(registerResult.user);
-                    } else {
-                        console.error("Ошибка регистрации:", registerResult.message);
-                    }
-                }
-            } catch (error) {
-                console.error("Ошибка сети:", error);
+            if (!error) {
+                alert("Регистрация успешна!");
+                loadProfileData({ email, nickname });
+            } else {
+                console.error("Ошибка регистрации:", error);
             }
         }
+
         
         // Функция загрузки данных профиля
         function loadProfileData(user) {
-            if (user) {
-                console.log('Загружаем данные пользователя:', user);
-                document.getElementById('profile-data').style.display = 'block';
-                document.getElementById('nickname').textContent = user.nickname;
-                document.getElementById('email').textContent = user.email;
-                document.getElementById('auth-form').style.display = 'none';
-            } else {
-                console.error('Ошибка: Данные пользователя не найдены');
-            }
+            document.getElementById('profile-data').style.display = 'block';
+            document.getElementById('nickname').textContent = user.nickname;
+            document.getElementById('email').textContent = user.email;
+            document.getElementById('auth-form').style.display = 'none';
         }
+
 
 
 
